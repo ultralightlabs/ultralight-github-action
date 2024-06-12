@@ -1,0 +1,33 @@
+name: Ultralight Github Action
+author: Ultralight Labs
+
+inputs:
+  ultralight-api-key:
+    description: >-
+      Ultralight API key. This can be generated in the Ultralight web app's
+      settings page. Store this as a secret.
+    required: true
+  ultralight-product-id:
+    description: >-
+      The ID of your Ultralight product. You can find this in your browser URL
+      when viewing your product in the Ultralight web app:
+      https://app.ultralightlabs.com/[your organization
+      name]/products/[ultralight-product-id]. Store this as a secret.
+    required: true
+  test-execution-report-path:
+    description: Path to the test execution report file.
+    required: false
+  test-protocol-definitions-directory-path:
+    description: >-
+      Path to the directory holding the YAML files for your test protocol
+      definitions.
+    required: false
+
+  ultralight-url:
+    required: false
+    description: For internal testing only.
+    default: https://app.ultralightlabs.com
+
+runs:
+  using: node20
+  main: dist/index.js

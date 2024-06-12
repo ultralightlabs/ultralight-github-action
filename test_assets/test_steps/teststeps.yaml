@@ -1,0 +1,8 @@
+ultralight-test-id: VER-1
+title: 'Upload test'
+description: 'This is a design controls end to end test'
+steps:
+  - step: Step 1
+    acceptance_criteria: Passes
+  - step: Step 2
+    acceptance_criteria: Passes

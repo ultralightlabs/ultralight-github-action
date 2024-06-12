@@ -1,0 +1,101 @@
+<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="33.081472000000005">
+<testsuite name="specs/mvp/designControls.spec.ts" timestamp="2024-05-22T20:03:04.264Z" hostname="chromium" tests="1" failures="1" skipped="0" time="25.832" errors="0">
+<testcase name="VER-1: Design Element Management and Product Review Creation Test" classname="specs/mvp/designControls.spec.ts" time="25.832">
+<failure message="designControls.spec.ts:15:5 DC-TEST-1: Design Element Management and Product Review Creation Test" type="FAILURE">
+<![CDATA[  [chromium] › specs/mvp/designControls.spec.ts:15:5 › DC-TEST-1: Design Element Management and Product Review Creation Test 
+
+    TimeoutError: locator.waitFor: Timeout 2000ms exceeded.
+    Call log:
+      - waiting for getByRole('button').filter({ hasText: 'TENS Devicebh4yo' }) to be visible
+
+
+       at pages/productsPage.ts:20
+
+      18 |       .getByRole('button')
+      19 |       .filter({ hasText: productName })
+    > 20 |     await productButtonLocator.waitFor({ timeout: 2000 })
+         |                                ^
+      21 |     await productButtonLocator.click()
+      22 |     return new ProductPage(this.page)
+      23 |   }
+
+        at ProductsPage.createProductAndGetProductPage (/Users/shiv/workspace/ultralight/e2e-tests/pages/productsPage.ts:20:32)
+        at /Users/shiv/workspace/ultralight/e2e-tests/specs/mvp/designControls.spec.ts:25:5
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/specs-mvp-designControls-D-eed4a-roduct-Review-Creation-Test-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/specs-mvp-designControls-D-eed4a-roduct-Review-Creation-Test-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: locator.waitFor: Timeout 2000ms exceeded.
+    Call log:
+      - waiting for getByRole('button').filter({ hasText: 'TENS Devicebgql3' }) to be visible
+
+
+       at pages/productsPage.ts:20
+
+      18 |       .getByRole('button')
+      19 |       .filter({ hasText: productName })
+    > 20 |     await productButtonLocator.waitFor({ timeout: 2000 })
+         |                                ^
+      21 |     await productButtonLocator.click()
+      22 |     return new ProductPage(this.page)
+      23 |   }
+
+        at ProductsPage.createProductAndGetProductPage (/Users/shiv/workspace/ultralight/e2e-tests/pages/productsPage.ts:20:32)
+        at /Users/shiv/workspace/ultralight/e2e-tests/specs/mvp/designControls.spec.ts:25:5
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/specs-mvp-designControls-D-eed4a-roduct-Review-Creation-Test-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/specs-mvp-designControls-D-eed4a-roduct-Review-Creation-Test-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: locator.waitFor: Timeout 2000ms exceeded.
+    Call log:
+      - waiting for getByRole('button').filter({ hasText: 'TENS Deviceye1h2' }) to be visible
+
+
+       at pages/productsPage.ts:20
+
+      18 |       .getByRole('button')
+      19 |       .filter({ hasText: productName })
+    > 20 |     await productButtonLocator.waitFor({ timeout: 2000 })
+         |                                ^
+      21 |     await productButtonLocator.click()
+      22 |     return new ProductPage(this.page)
+      23 |   }
+
+        at ProductsPage.createProductAndGetProductPage (/Users/shiv/workspace/ultralight/e2e-tests/pages/productsPage.ts:20:32)
+        at /Users/shiv/workspace/ultralight/e2e-tests/specs/mvp/designControls.spec.ts:25:5
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/specs-mvp-designControls-D-eed4a-roduct-Review-Creation-Test-chromium-retry2/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/specs-mvp-designControls-D-eed4a-roduct-Review-Creation-Test-chromium-retry2/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|specs-mvp-designControls-D-eed4a-roduct-Review-Creation-Test-chromium/trace.zip]]
+
+[[ATTACHMENT|specs-mvp-designControls-D-eed4a-roduct-Review-Creation-Test-chromium-retry1/trace.zip]]
+
+[[ATTACHMENT|specs-mvp-designControls-D-eed4a-roduct-Review-Creation-Test-chromium-retry2/trace.zip]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

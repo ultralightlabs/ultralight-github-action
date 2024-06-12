@@ -1,0 +1,10 @@
+#!/bin/bash
+
+yarn package &&
+	UL_API_KEY=INSERT_API_KEY \
+	UL_PRODUCT_ID=1 \
+	UL_TEST_EXECUTION_REPORT_PATH=test_assets/fail.xml \
+	UL_TEST_PROTOCOL_DEFINITIONS_DIRECTORY_PATH=test_assets/test_steps \
+	GITHUB_SHA=31c60e03fa94339a1229a0a4d1b7ee2e883d579a \
+	ULTRALIGHT_URL=http://localhost:8910 \
+	node dist/index.js
