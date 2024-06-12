@@ -1,8 +1,6 @@
 # Ultralight GitHub Action
 
-This GitHub Action provides a convenient interface for your project to report
-test executions and sync test protocol definitions to your Ultralight Design
-Controls instance.
+This GitHub Action reports test protocols and executions to your Ultralight instance, for best-in-class traceability.
 
 See the input descriptions in [action.yml](action.yml) for full details on
 usage.
