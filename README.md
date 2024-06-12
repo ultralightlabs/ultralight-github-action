@@ -1,6 +1,7 @@
 # Ultralight GitHub Action
 
-This GitHub Action reports test protocols and executions to your Ultralight instance, for best-in-class traceability.
+This GitHub Action reports test protocols and executions to your Ultralight
+instance, for best-in-class traceability.
 
 See the input descriptions in [action.yml](action.yml) for full details on
 usage.
