@@ -1,6 +1,9 @@
 name: Ultralight Github Action
 author: Ultralight Labs
-
+description: Reports test protocols and executions to your Ultralight instance
+branding:
+  icon: check-square
+  color: orange
 inputs:
   ultralight-api-key:
     description: >-
