@@ -4,26 +4,36 @@ description: Reports test protocols and executions to your Ultralight instance
 branding:
   icon: check-square
   color: orange
+
+# Warning: this interface is documented in the README. Changes here should be reflected there.
 inputs:
   ultralight-api-key:
     description: >-
-      Ultralight API key. This can be generated in the Ultralight web app's
-      settings page. Store this as a secret.
+      This can be generated in the Ultralight web app's settings page. Store
+      this as a secret.
     required: true
   ultralight-product-id:
     description: >-
       The ID of your Ultralight product. You can find this in your browser URL
       when viewing your product in the Ultralight web app:
-      https://app.ultralightlabs.com/[your organization
-      name]/products/[ultralight-product-id]. Store this as a secret.
+      https://app.ultralightlabs.com/[organization-name]/products/[ultralight-product-id].
+      Store this as a secret.
     required: true
   test-execution-report-path:
-    description: Path to the test execution report file.
+    description: >-
+      Path to the test execution report file. The Ultralight API supports the
+      JUnit XML format for test execution reports. Most testing frameworks
+      provide mechanisms to output in JUnit, either in-built or via plugins.
+      Every test case in the test execution output must include the ID of an
+      existing Verification (e.g. VER-1) or Validation (e.g. VAL-2) in your
+      Ultralight Design Controls instance.
     required: false
   test-protocol-definitions-directory-path:
     description: >-
       Path to the directory holding the YAML files for your test protocol
-      definitions.
+      definitions. Every test protocol must be an existing Verification (e.g.
+      VER-1) or Validation (e.g. VAL-2) in your Ultralight Design Controls
+      instance.
     required: false
 
   ultralight-url:
