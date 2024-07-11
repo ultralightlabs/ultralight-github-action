@@ -94,6 +94,7 @@ export async function run(): Promise<void> {
       for (const error of data.errors) {
         core.error(error.message)
       }
+      core.setFailed('Ultralight GitHub Action failed')
     }
   } catch (error) {
     if (error instanceof Error) {
