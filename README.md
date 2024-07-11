@@ -83,7 +83,7 @@ on:
 
 ### Manual
 
-Allows you to trigger the workflow manually at any time via the GitHub actions
+Allows you to trigger the workflow manually at any time via the GitHub Actions
 web UI. Useful for testing during the setup of your workflow.
 
 ```yaml

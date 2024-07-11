@@ -61864,6 +61864,7 @@ async function run() {
             for (const error of data.errors) {
                 core.error(error.message);
             }
+            core.setFailed('Ultralight GitHub Action failed');
         }
     }
     catch (error) {
