@@ -1,5 +1,6 @@
 ultralight-test-id: VER-1
 title: 'Upload test'
+method: Automated Test
 description: 'This is a design controls end to end test'
 steps:
   - step: Step 1

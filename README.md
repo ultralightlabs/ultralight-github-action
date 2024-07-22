@@ -47,6 +47,7 @@ Each test case must be written in a separate YAML file in the following format:
 ```yaml
 ultralight-test-id: number
 title: string
+method: string (optional. e.g. Unit Test)
 description: string
 steps:
   - step: string
