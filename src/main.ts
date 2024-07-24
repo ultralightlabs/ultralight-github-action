@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { uploadFile } from './upload'
 import { getAuthHeader } from './utils'
 import { getGithubBuildUrl } from './githubUtils'
@@ -97,8 +97,16 @@ export async function run(): Promise<void> {
       core.setFailed('Ultralight GitHub Action failed')
     }
   } catch (error) {
-    if (error instanceof Error) {
-      core.setFailed(error.message)
+    if (error instanceof AxiosError && error.response?.data.errors) {
+      for (const err of error.response.data.errors) {
+        core.error(err.message)
+      }
+    } else if (error instanceof Error) {
+      core.error(error.message)
+    } else {
+      core.error('Unknown error')
     }
+
+    core.setFailed('Ultralight GitHub Action failed')
   }
 }
