@@ -61787,14 +61787,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
-const axios_1 = __importDefault(__nccwpck_require__(8757));
+const axios_1 = __importStar(__nccwpck_require__(8757));
 const upload_1 = __nccwpck_require__(7296);
 const utils_1 = __nccwpck_require__(1314);
 const githubUtils_1 = __nccwpck_require__(5133);
@@ -61868,9 +61865,18 @@ async function run() {
         }
     }
     catch (error) {
-        if (error instanceof Error) {
-            core.setFailed(error.message);
+        if (error instanceof axios_1.AxiosError && error.response?.data.errors) {
+            for (const err of error.response.data.errors) {
+                core.error(err.message);
+            }
         }
+        else if (error instanceof Error) {
+            core.error(error.message);
+        }
+        else {
+            core.error('Unknown error');
+        }
+        core.setFailed('Ultralight GitHub Action failed');
     }
 }
 exports.run = run;
