@@ -1,9 +1,8 @@
 import * as core from '@actions/core'
-import * as github from '@actions/github'
 import axios, { AxiosError } from 'axios'
 import { uploadFile } from './upload'
 import { getAuthHeader } from './utils'
-import { getGithubBuildUrl } from './githubUtils'
+import { getGithubBuildUrl, getGithubCommitUrl } from './githubUtils'
 
 export async function run(): Promise<void> {
   try {
@@ -20,10 +19,6 @@ export async function run(): Promise<void> {
         ? process.env.UL_PRODUCT_ID
         : core.getInput('ultralight-product-id')
     )
-
-    const githubSha = process.env.GITHUB_SHA
-      ? process.env.GITHUB_SHA
-      : github.context.sha
 
     const testProtocolDefinitionsDirPath = process.env
       .UL_TEST_PROTOCOL_DEFINITIONS_DIRECTORY_PATH
@@ -66,7 +61,7 @@ export async function run(): Promise<void> {
       new URL('api/v1/report/build', ultralightUrl).toString(),
       {
         githubBuildUrl: getGithubBuildUrl(),
-        githubSha,
+        githubCommitUrl: getGithubCommitUrl(),
         testReport: testExecutionReportPath
           ? {
               key: reportKey,

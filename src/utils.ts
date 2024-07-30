@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 
-export const getAuthHeader = (): { Authorization: string } => {
+export const getAuthHeader = (): { 'X-API-KEY': string } => {
   const ultralightApiKey = process.env.UL_API_KEY
     ? process.env.UL_API_KEY
     : core.getInput('ultralight-api-key')
@@ -8,6 +8,6 @@ export const getAuthHeader = (): { Authorization: string } => {
     throw new Error('Ultralight API key is required')
   }
   return {
-    Authorization: `Bearer ${ultralightApiKey}`
+    'X-API-KEY': ultralightApiKey
   }
 }
