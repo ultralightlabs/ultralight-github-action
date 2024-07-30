@@ -62,7 +62,6 @@ export async function run(): Promise<void> {
       {
         githubBuildUrl: getGithubBuildUrl(),
         githubCommitUrl: getGithubCommitUrl(),
-        githubSha: process.env.GITHUB_SHA, // DEPRECATED
         testReport: testExecutionReportPath
           ? {
               key: reportKey,

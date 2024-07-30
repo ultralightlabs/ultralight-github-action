@@ -57565,7 +57565,6 @@ async function run() {
         const result = await axios_1.default.post(new URL('api/v1/report/build', ultralightUrl).toString(), {
             githubBuildUrl: (0, githubUtils_1.getGithubBuildUrl)(),
             githubCommitUrl: (0, githubUtils_1.getGithubCommitUrl)(),
-            githubSha: process.env.GITHUB_SHA, // DEPRECATED
             testReport: testExecutionReportPath
                 ? {
                     key: reportKey,
