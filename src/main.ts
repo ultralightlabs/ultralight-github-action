@@ -3,7 +3,7 @@ import * as github from '@actions/github'
 import axios, { AxiosError } from 'axios'
 import { uploadFile } from './upload'
 import { getAuthHeader } from './utils'
-import { getGithubBuildUrl } from './githubUtils'
+import { getGithubBuildUrl, getGithubRepoUrl } from './githubUtils'
 
 export async function run(): Promise<void> {
   try {
@@ -66,6 +66,7 @@ export async function run(): Promise<void> {
       new URL('api/v1/report/build', ultralightUrl).toString(),
       {
         githubBuildUrl: getGithubBuildUrl(),
+        githubRepositoryUrl: getGithubRepoUrl(),
         githubSha,
         testReport: testExecutionReportPath
           ? {

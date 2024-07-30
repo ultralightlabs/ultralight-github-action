@@ -61750,7 +61750,11 @@ ZipStream.prototype.finalize = function() {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getGithubBuildUrl = void 0;
+exports.getGithubBuildUrl = exports.getGithubRepoUrl = void 0;
+const getGithubRepoUrl = () => {
+    return `https://github.com/${process.env.GITHUB_REPOSITORY}`;
+};
+exports.getGithubRepoUrl = getGithubRepoUrl;
 const getGithubBuildUrl = () => {
     return `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
 };
@@ -61836,6 +61840,7 @@ async function run() {
         /* Test Steps END */
         const result = await axios_1.default.post(new URL('api/v1/report/build', ultralightUrl).toString(), {
             githubBuildUrl: (0, githubUtils_1.getGithubBuildUrl)(),
+            githubRepositoryUrl: (0, githubUtils_1.getGithubRepoUrl)(),
             githubSha,
             testReport: testExecutionReportPath
                 ? {
@@ -61983,7 +61988,7 @@ const getAuthHeader = () => {
         throw new Error('Ultralight API key is required');
     }
     return {
-        Authorization: `Bearer ${ultralightApiKey}`
+        'X-API-KEY': ultralightApiKey
     };
 };
 exports.getAuthHeader = getAuthHeader;
