@@ -6353,7 +6353,7 @@ __metadata:
     prettier-eslint: ^16.3.0
     ts-jest: ^29.1.2
     typescript: ^5.4.5
-    ultralight-core: ^0.0.6
+    ultralight-core: ^0.1.1
   languageName: unknown
   linkType: soft
 
@@ -6377,9 +6377,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ultralight-core@npm:^0.0.6":
-  version: 0.0.6
-  resolution: "ultralight-core@npm:0.0.6"
+"ultralight-core@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "ultralight-core@npm:0.1.1"
   dependencies:
     "@oclif/core": ^4.0.18
     "@types/archiver": ^6.0.2
@@ -6388,7 +6388,7 @@ __metadata:
     form-data: ^4.0.0
   bin:
     ultralight-core: bin/run.js
-  checksum: 51d7d8c22b6dd59f5c666479cc60d58c306fe195129e85a84bc07ff8f6af306ac9c5597fabe412d9e89bcd8c0cb4c100f0e2a3a7c9190be44d1ab3b89076d6ea
+  checksum: 35095fb943b162a0a4af8d79b25f2e66bb48f52e4967681423cc7e77283d8cdb6df83f4dee2b85e51d61bbf8cf79cfb2f3a0b365204bcc62241867e209dc5194
   languageName: node
   linkType: hard
 
