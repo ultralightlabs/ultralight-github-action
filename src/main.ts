@@ -1,5 +1,9 @@
 import * as core from '@actions/core'
-import { getGithubBuildUrl, getGithubCommitUrl } from './githubUtils'
+import {
+  getGithubBuildUrl,
+  getGithubCommitUrl,
+  getGithubPullRequestUrl
+} from './githubUtils'
 import { getApiKey } from './utils'
 import { report as reportUltralight } from 'ultralight-core'
 
@@ -27,6 +31,7 @@ export async function run(): Promise<void> {
     const result = await reportUltralight({
       buildUrl: getGithubBuildUrl(),
       commitUrl: getGithubCommitUrl(),
+      pullRequestUrl: getGithubPullRequestUrl(),
       testExecutionReportPath,
       testProtocolDefinitionsDirPath,
       ultralightProductId,
