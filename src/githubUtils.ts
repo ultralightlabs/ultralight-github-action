@@ -5,7 +5,3 @@ export const getGithubCommitUrl = (): string => {
 export const getGithubBuildUrl = (): string => {
   return `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
 }
-
-export const getGithubPullRequestUrl = (): string => {
-  return `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/pull/${process.env.GITHUB_PR_NUMBER}`
-}
