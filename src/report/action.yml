@@ -1,4 +1,4 @@
-# Note that this file is copied to src/report/action.yml for backwards compatibility when we added a second Github Action
+# Note that this file is copied from action.yml for backwards compatibility when we added a second Github Action
 
 name: Ultralight Github Action
 author: Ultralight Labs

@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
-import { getGithubBuildUrl, getGithubCommitUrl } from './githubUtils'
-import { getApiKey } from './utils'
+import { getGithubBuildUrl, getGithubCommitUrl } from '../githubUtils'
+import { getApiKey } from '../utils'
 import { report as reportUltralight } from 'ultralight-core'
 
 export async function run(): Promise<void> {
