@@ -1,14 +1,20 @@
 # Ultralight GitHub Action
 
-This GitHub Action reports test protocols and executions to your Ultralight
-instance, for best-in-class traceability.
+This GitHub Action reports code commits, test protocols, and test executions to
+your Ultralight instance, for best-in-class traceability.
 
 ## Usage
+
+### `command: reportTest`
 
 ```yaml
 - if: always() # Runs even if previous steps fail
   uses: ultralightlabs/ultralight-github-action@v1
   with:
+    # Required.
+    # The command type. One of 'reportTest' or 'reportCommit'.
+    command: reportTest
+
     # Required.
     # This can be generated in the Ultralight web app's settings page. Store
     # this as a secret.
@@ -40,7 +46,7 @@ instance, for best-in-class traceability.
     test-protocol-definitions-directory-path: test-protocols/
 ```
 
-### Test Protocol Definitions
+#### Test Protocol Definitions
 
 Each test case must be written in a separate YAML file in the following format:
 
@@ -54,6 +60,43 @@ steps:
     acceptance_criteria: string
   - step: string
     acceptance_criteria: string
+```
+
+### `command: reportCommit`
+
+```yaml
+- if: always() # Runs even if previous steps fail
+  uses: ultralightlabs/ultralight-github-action@v1
+  with:
+    # Required.
+    # The command type. One of 'reportTest' or 'reportCommit'.
+    command: reportCommit
+
+    # Required.
+    # This can be generated in the Ultralight web app's settings page. Store
+    # this as a secret.
+    ultralight-api-key: ${{secrets.ULTRALIGHT_GH_ACTION_API_KEY}}
+
+    # Required.
+    # Commit hash queried from your github action context. Query method varies depending on your
+    # workflow's event trigger.
+    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/build.yml
+    # for full examples conditioned on event trigger.
+    commit-hash:
+
+    # Optional.
+    # PR URL queried from your github action context. Query method varies depending on your
+    # workflow's event trigger.
+    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/build.yml
+    # for full examples conditioned on event trigger.
+    pr-url:
+
+    # Required.
+    # PR description queried from your github action context. Query method varies depending on your
+    # workflow's event trigger.
+    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/build.yml
+    # for full examples conditioned on event trigger.
+    pr-description-file-path: pr-body.txt
 ```
 
 ## Integrating into your team's release process
@@ -97,9 +140,3 @@ on:
 See
 [GitHub's documentation on workflow triggers](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows)
 for further customization to fit to your team's release processes.
-
-### ⚠️ Not Recommended ⚠️
-
-You should avoid adding the Ultralight GitHub Action to an existing CI build
-(for example, a workflow that is triggered for every pushed commit or PR). This
-will mostly result in undesired noise in your Design Controls instance.

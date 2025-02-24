@@ -7,18 +7,25 @@ branding:
 
 # Warning: this interface is documented in the README. Changes here should be reflected there.
 inputs:
+  command:
+    description: The command type. One of 'reportTest' or 'reportCommit'.
+    required: true
+
   ultralight-api-key:
     description: >-
       This can be generated in the Ultralight web app's settings page. Store
       this as a secret.
     required: true
+
+  # command=reportTest
   ultralight-product-id:
     description: >-
-      The ID of your Ultralight product. You can find this in your browser URL
-      when viewing your product in the Ultralight web app:
+      Required for command=reportTest. The ID of your Ultralight product. You
+      can find this in your browser URL when viewing your product in the
+      Ultralight web app:
       https://app.ultralightlabs.com/[organization-name]/products/[ultralight-product-id].
       Store this as a secret.
-    required: true
+    required: false
   test-execution-report-path:
     description: >-
       Path to the test execution report file. The Ultralight API supports the
@@ -34,6 +41,31 @@ inputs:
       definitions. Every test protocol must be an existing Verification (e.g.
       VER-1) or Validation (e.g. VAL-2) in your Ultralight Design Controls
       instance.
+    required: false
+
+  # command=reportCommit
+  commit-hash:
+    description: >-
+      Required for command=reportCommit. Commit hash queried from your github
+      action context. Query method varies depending on your workflow's event
+      trigger. See
+      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/build.yml
+      for full examples conditioned on event trigger.
+    required: false
+  pr-url:
+    description: >-
+      PR URL queried from your github action context. Query method varies
+      depending on your workflow's event trigger. See
+      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/build.yml
+      for full examples conditioned on event trigger.
+    required: false
+  pr-description-file-path:
+    description: >-
+      Required for command=reportCommit. PR description queried from your github
+      action context. Query method varies depending on your workflow's event
+      trigger. See
+      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/build.yml
+      for full examples conditioned on event trigger.
     required: false
 
   ultralight-url:
