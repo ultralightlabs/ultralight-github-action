@@ -6353,7 +6353,7 @@ __metadata:
     prettier-eslint: ^16.3.0
     ts-jest: ^29.1.2
     typescript: ^5.4.5
-    ultralight-core: ^0.1.2
+    ultralight-core: canary
   languageName: unknown
   linkType: soft
 
@@ -6377,18 +6377,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ultralight-core@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "ultralight-core@npm:0.1.2"
+"ultralight-core@npm:canary":
+  version: 0.2.0-canary.0
+  resolution: "ultralight-core@npm:0.2.0-canary.0"
   dependencies:
     "@oclif/core": ^4.0.18
     "@types/archiver": ^6.0.2
     archiver: ^7.0.1
     axios: ^1.7.1
     form-data: ^4.0.0
+    yaml: ^2.7.0
+    zod: ^3.24.2
   bin:
     ultralight-core: bin/run.js
-  checksum: f3a67c237d1dca00cf129f80c865e4d8f387b279d52940bf38a055704b07ba8b848ed8f4a324dddd2030555420f68c6173f1ac4f4c45492980bd239b4c1bb770
+  checksum: 88ff9759872af0c8195e83a37f7f639867ccc2499978a1ddf73440b01ad29fe6278ae8fe28a9e274f376368c26005f71ad4480062b28ea790bda17cc8582df9e
   languageName: node
   linkType: hard
 
@@ -6677,6 +6679,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"yaml@npm:^2.7.0":
+  version: 2.7.0
+  resolution: "yaml@npm:2.7.0"
+  bin:
+    yaml: bin.mjs
+  checksum: 6e8b2f9b9d1b18b10274d58eb3a47ec223d9a93245a890dcb34d62865f7e744747190a9b9177d5f0ef4ea2e44ad2c0214993deb42e0800766203ac46f00a12dd
+  languageName: node
+  linkType: hard
+
 "yargs-parser@npm:^21.0.1, yargs-parser@npm:^21.1.1":
   version: 21.1.1
   resolution: "yargs-parser@npm:21.1.1"
@@ -6714,5 +6725,12 @@ __metadata:
     compress-commons: ^6.0.2
     readable-stream: ^4.0.0
   checksum: aa5abd6a89590eadeba040afbc375f53337f12637e5e98330012a12d9886cde7a3ccc28bd91aafab50576035bbb1de39a9a316eecf2411c8b9009c9f94f0db27
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.24.2":
+  version: 3.24.2
+  resolution: "zod@npm:3.24.2"
+  checksum: c02455c09678c5055c636d64f9fcda2424fea0aa46ac7d9681e7f41990bc55f488bcd84b9d7cfef0f6e906f51f55b245239d92a9f726248aa74c5b84edf00c2d
   languageName: node
   linkType: hard
