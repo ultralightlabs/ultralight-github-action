@@ -5,15 +5,15 @@ your Ultralight instance, for best-in-class traceability.
 
 ## Usage
 
-### `command: reportTest`
+### `command: REPORT_TEST`
 
 ```yaml
 - if: always() # Runs even if previous steps fail
   uses: ultralightlabs/ultralight-github-action@v1
   with:
     # Required.
-    # The command type. One of 'reportTest' or 'reportCommit'.
-    command: reportTest
+    # The command type. One of 'REPORT_TEST' or 'REPORT_COMMIT'.
+    command: REPORT_TEST
 
     # Required.
     # This can be generated in the Ultralight web app's settings page. Store
@@ -62,15 +62,15 @@ steps:
     acceptance_criteria: string
 ```
 
-### `command: reportCommit`
+### `command: REPORT_COMMIT`
 
 ```yaml
 - if: always() # Runs even if previous steps fail
   uses: ultralightlabs/ultralight-github-action@v1
   with:
     # Required.
-    # The command type. One of 'reportTest' or 'reportCommit'.
-    command: reportCommit
+    # The command type. One of 'REPORT_TEST' or 'REPORT_COMMIT'.
+    command: REPORT_COMMIT
 
     # Required.
     # This can be generated in the Ultralight web app's settings page. Store

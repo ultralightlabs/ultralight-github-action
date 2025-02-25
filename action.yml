@@ -8,7 +8,7 @@ branding:
 # Warning: this interface is documented in the README. Changes here should be reflected there.
 inputs:
   command:
-    description: The command type. One of 'reportTest' or 'reportCommit'.
+    description: The command type. One of 'REPORT_TEST' or 'REPORT_COMMIT'.
     required: true
 
   ultralight-api-key:
@@ -17,10 +17,10 @@ inputs:
       this as a secret.
     required: true
 
-  # command=reportTest
+  # command=REPORT_TEST
   ultralight-product-id:
     description: >-
-      Required for command=reportTest. The ID of your Ultralight product. You
+      Required for command=REPORT_TEST. The ID of your Ultralight product. You
       can find this in your browser URL when viewing your product in the
       Ultralight web app:
       https://app.ultralightlabs.com/[organization-name]/products/[ultralight-product-id].
@@ -43,10 +43,10 @@ inputs:
       instance.
     required: false
 
-  # command=reportCommit
+  # command=REPORT_COMMIT
   commit-hash:
     description: >-
-      Required for command=reportCommit. Commit hash queried from your github
+      Required for command=REPORT_COMMIT. Commit hash queried from your github
       action context. Query method varies depending on your workflow's event
       trigger. See
       https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/build.yml
@@ -61,9 +61,9 @@ inputs:
     required: false
   pr-description-file-path:
     description: >-
-      Required for command=reportCommit. PR description queried from your github
-      action context. Query method varies depending on your workflow's event
-      trigger. See
+      Required for command=REPORT_COMMIT. PR description queried from your
+      github action context. Query method varies depending on your workflow's
+      event trigger. See
       https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/build.yml
       for full examples conditioned on event trigger.
     required: false

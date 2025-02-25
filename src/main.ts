@@ -34,10 +34,10 @@ export async function run(): Promise<void> {
       errors: string[]
     }
 
-    if (command === 'reportTest') {
+    if (command === 'REPORT_TEST') {
       if (!ultralightProductId)
         throw new Error(
-          'command=reportTest requires input ultralight-product-id'
+          'command=REPORT_TEST requires input ultralight-product-id'
         )
 
       result = await reportTest({
@@ -49,13 +49,13 @@ export async function run(): Promise<void> {
         ultralightApiKey,
         ultralightUrl
       })
-    } else if (command === 'reportCommit') {
+    } else if (command === 'REPORT_COMMIT') {
       if (!commitHash)
-        throw new Error('command=reportCommit requires input commit-hash')
-      if (!prUrl) throw new Error('command=reportCommit requires input pr-url')
+        throw new Error('command=REPORT_COMMIT requires input commit-hash')
+      if (!prUrl) throw new Error('command=REPORT_COMMIT requires input pr-url')
       if (!prDescriptionFilePath)
         throw new Error(
-          'command=reportCommit requires input pr-description-file-path'
+          'command=REPORT_COMMIT requires input pr-description-file-path'
         )
 
       result = await reportCommit({

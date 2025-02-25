@@ -25004,9 +25004,9 @@ async function run() {
         const prDescriptionFilePath = process.env.PR_DESCRIPTION_FILE_PATH ||
             core.getInput('pr-description-file-path');
         let result;
-        if (command === 'reportTest') {
+        if (command === 'REPORT_TEST') {
             if (!ultralightProductId)
-                throw new Error('command=reportTest requires input ultralight-product-id');
+                throw new Error('command=REPORT_TEST requires input ultralight-product-id');
             result = await (0, ultralight_core_1.report)({
                 buildUrl: (0, githubUtils_1.getGithubBuildUrl)(),
                 commitUrl: (0, githubUtils_1.getGithubCommitUrl)(),
@@ -25017,13 +25017,13 @@ async function run() {
                 ultralightUrl
             });
         }
-        else if (command === 'reportCommit') {
+        else if (command === 'REPORT_COMMIT') {
             if (!commitHash)
-                throw new Error('command=reportCommit requires input commit-hash');
+                throw new Error('command=REPORT_COMMIT requires input commit-hash');
             if (!prUrl)
-                throw new Error('command=reportCommit requires input pr-url');
+                throw new Error('command=REPORT_COMMIT requires input pr-url');
             if (!prDescriptionFilePath)
-                throw new Error('command=reportCommit requires input pr-description-file-path');
+                throw new Error('command=REPORT_COMMIT requires input pr-description-file-path');
             result = await (0, ultralight_core_1.reportCommit)({
                 ultralightUrl,
                 ultralightApiKey,
