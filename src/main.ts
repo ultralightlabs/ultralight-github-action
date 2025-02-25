@@ -1,38 +1,76 @@
 import * as core from '@actions/core'
 import { getGithubBuildUrl, getGithubCommitUrl } from './githubUtils'
 import { getApiKey } from './utils'
-import { report as reportUltralight } from 'ultralight-core'
+import { report as reportTest, reportCommit } from 'ultralight-core'
+import fs from 'fs'
 
 export async function run(): Promise<void> {
   try {
-    const testExecutionReportPath = process.env.UL_TEST_EXECUTION_REPORT_PATH
-      ? process.env.UL_TEST_EXECUTION_REPORT_PATH
-      : core.getInput('test-execution-report-path')
+    const command = process.env.COMMAND || core.getInput('command')
 
-    const ultralightUrl = process.env.ULTRALIGHT_URL
-      ? process.env.ULTRALIGHT_URL
-      : core.getInput('ultralight-url')
-
+    const ultralightApiKey = getApiKey()
     const ultralightProductId = parseInt(
-      process.env.UL_PRODUCT_ID
-        ? process.env.UL_PRODUCT_ID
-        : core.getInput('ultralight-product-id')
+      process.env.UL_PRODUCT_ID || core.getInput('ultralight-product-id')
     )
+    const ultralightUrl =
+      process.env.ULTRALIGHT_URL || core.getInput('ultralight-url')
 
-    const testProtocolDefinitionsDirPath = process.env
-      .UL_TEST_PROTOCOL_DEFINITIONS_DIRECTORY_PATH
-      ? process.env.UL_TEST_PROTOCOL_DEFINITIONS_DIRECTORY_PATH
-      : core.getInput('test-protocol-definitions-directory-path')
+    const testProtocolDefinitionsDirPath =
+      process.env.UL_TEST_PROTOCOL_DEFINITIONS_DIRECTORY_PATH ||
+      core.getInput('test-protocol-definitions-directory-path')
+    const testExecutionReportPath =
+      process.env.UL_TEST_EXECUTION_REPORT_PATH ||
+      core.getInput('test-execution-report-path')
 
-    const result = await reportUltralight({
-      buildUrl: getGithubBuildUrl(),
-      commitUrl: getGithubCommitUrl(),
-      testExecutionReportPath,
-      testProtocolDefinitionsDirPath,
-      ultralightProductId,
-      ultralightApiKey: getApiKey(),
-      ultralightUrl
-    })
+    const commitHash = process.env.COMMIT_HASH || core.getInput('commit-hash')
+    const prUrl = process.env.PR_URL || core.getInput('pr-url')
+    const prDescriptionFilePath =
+      process.env.PR_DESCRIPTION_FILE_PATH ||
+      core.getInput('pr-description-file-path')
+
+    let result: {
+      messages: string[]
+      warnings: string[]
+      errors: string[]
+    }
+
+    if (command === 'REPORT_TEST') {
+      if (!ultralightProductId)
+        throw new Error(
+          'command=REPORT_TEST requires input ultralight-product-id'
+        )
+
+      result = await reportTest({
+        buildUrl: getGithubBuildUrl(),
+        commitUrl: getGithubCommitUrl(),
+        testExecutionReportPath,
+        testProtocolDefinitionsDirPath,
+        ultralightProductId,
+        ultralightApiKey,
+        ultralightUrl
+      })
+    } else if (command === 'REPORT_COMMIT') {
+      if (!commitHash)
+        throw new Error('command=REPORT_COMMIT requires input commit-hash')
+      if (!prUrl) throw new Error('command=REPORT_COMMIT requires input pr-url')
+      if (!prDescriptionFilePath)
+        throw new Error(
+          'command=REPORT_COMMIT requires input pr-description-file-path'
+        )
+
+      result = await reportCommit({
+        ultralightUrl,
+        ultralightApiKey,
+        pullRequestDescription: fs.readFileSync(prDescriptionFilePath, 'utf8'),
+        commit: {
+          hash: commitHash,
+          pullRequestUrl: prUrl
+        }
+      })
+    } else {
+      throw new Error(`Unknown command: ${command}`)
+    }
+
     for (const info of result.messages) {
       core.info(info)
     }
