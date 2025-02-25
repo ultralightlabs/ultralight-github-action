@@ -1,6 +1,8 @@
 name: Ultralight Github Action
 author: Ultralight Labs
-description: Reports code commits, test protocols, and test executions to your Ultralight instance
+description:
+  Reports code commits, test protocols, and test executions to your Ultralight
+  instance
 branding:
   icon: check-square
   color: orange

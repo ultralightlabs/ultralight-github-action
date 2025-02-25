@@ -280869,7 +280869,7 @@ const utils_1 = __nccwpck_require2_(71314);
 const yaml_1 = __importDefault(__nccwpck_require2_(44083));
 const zod_1 = __nccwpck_require2_(63301);
 const ultralightYamlZodSchema = zod_1.z.object({
-    mergeBlockOverride: zod_1.z
+    'merge-block-override': zod_1.z
         .enum(['SKIP_RELEASE_DOCUMENTATION', 'SKIP_VERSION_APPROVAL'])
         .optional(),
     releases: zod_1.z.array(zod_1.z.string()),
@@ -280901,7 +280901,7 @@ function reportCommit(_a) {
         let softwareParts;
         try {
             const zodParseResult = ultralightYamlZodSchema.parse(parsedYaml);
-            mergeBlockOverride = zodParseResult.mergeBlockOverride;
+            mergeBlockOverride = zodParseResult['merge-block-override'];
             releases = zodParseResult.releases;
             softwareParts = zodParseResult['software-parts'];
         }
