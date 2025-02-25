@@ -80,21 +80,21 @@ steps:
     # Required.
     # Commit hash queried from your github action context. Query method varies depending on your
     # workflow's event trigger.
-    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/build.yml
+    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
     # for full examples conditioned on event trigger.
     commit-hash:
 
     # Optional.
     # PR URL queried from your github action context. Query method varies depending on your
     # workflow's event trigger.
-    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/build.yml
+    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
     # for full examples conditioned on event trigger.
     pr-url:
 
     # Required.
     # PR description queried from your github action context. Query method varies depending on your
     # workflow's event trigger.
-    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/build.yml
+    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
     # for full examples conditioned on event trigger.
     pr-description-file-path: pr-body.txt
 ```

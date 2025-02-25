@@ -1,6 +1,6 @@
 name: Ultralight Github Action
 author: Ultralight Labs
-description: Reports test protocols and executions to your Ultralight instance
+description: Reports code commits, test protocols, and test executions to your Ultralight instance
 branding:
   icon: check-square
   color: orange
@@ -49,14 +49,14 @@ inputs:
       Required for command=REPORT_COMMIT. Commit hash queried from your github
       action context. Query method varies depending on your workflow's event
       trigger. See
-      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/build.yml
+      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
       for full examples conditioned on event trigger.
     required: false
   pr-url:
     description: >-
       PR URL queried from your github action context. Query method varies
       depending on your workflow's event trigger. See
-      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/build.yml
+      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
       for full examples conditioned on event trigger.
     required: false
   pr-description-file-path:
@@ -64,7 +64,7 @@ inputs:
       Required for command=REPORT_COMMIT. PR description queried from your
       github action context. Query method varies depending on your workflow's
       event trigger. See
-      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/build.yml
+      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
       for full examples conditioned on event trigger.
     required: false
 
