@@ -28,88 +28,65 @@ export async function run(): Promise<void> {
       process.env.PR_DESCRIPTION_FILE_PATH ||
       core.getInput('pr-description-file-path')
 
+    let result: {
+      messages: string[]
+      warnings: string[]
+      errors: string[]
+    }
+
     if (command === 'reportTest') {
-      await handleReportTest({
+      if (!ultralightProductId)
+        throw new Error(
+          'command=reportTest requires input ultralight-product-id'
+        )
+
+      result = await reportTest({
+        buildUrl: getGithubBuildUrl(),
+        commitUrl: getGithubCommitUrl(),
         testExecutionReportPath,
         testProtocolDefinitionsDirPath,
         ultralightProductId,
         ultralightApiKey,
         ultralightUrl
       })
-    } else {
-      // command === 'reportCommit'
-      await handleReportCommit({
-        ultralightApiKey,
+    } else if (command === 'reportCommit') {
+      if (!commitHash)
+        throw new Error('command=reportCommit requires input commit-hash')
+      if (!prUrl) throw new Error('command=reportCommit requires input pr-url')
+      if (!prDescriptionFilePath)
+        throw new Error(
+          'command=reportCommit requires input pr-description-file-path'
+        )
+
+      result = await reportCommit({
         ultralightUrl,
-        commitHash,
-        prUrl,
-        prDescriptionFilePath
+        ultralightApiKey,
+        pullRequestDescription: fs.readFileSync(prDescriptionFilePath, 'utf8'),
+        commit: {
+          hash: commitHash,
+          pullRequestUrl: prUrl
+        }
       })
+    } else {
+      throw new Error(`Unknown command: ${command}`)
+    }
+
+    for (const info of result.messages) {
+      core.info(info)
+    }
+    for (const warn of result.warnings) {
+      core.warning(warn)
+    }
+
+    if (result.errors.length > 0) {
+      for (const error of result.errors) {
+        core.error(error)
+      }
+      core.setFailed('Ultralight GitHub Action failed')
     }
   } catch (error) {
     if (error instanceof Error) {
       core.setFailed(error.message)
     }
   }
-}
-
-const handleReportTest = async ({
-  testExecutionReportPath,
-  testProtocolDefinitionsDirPath,
-  ultralightProductId,
-  ultralightApiKey,
-  ultralightUrl
-}: {
-  testExecutionReportPath: string
-  testProtocolDefinitionsDirPath: string
-  ultralightProductId: number
-  ultralightApiKey: string
-  ultralightUrl: string
-}): Promise<void> => {
-  const result = await reportTest({
-    buildUrl: getGithubBuildUrl(),
-    commitUrl: getGithubCommitUrl(),
-    testExecutionReportPath,
-    testProtocolDefinitionsDirPath,
-    ultralightProductId,
-    ultralightApiKey,
-    ultralightUrl
-  })
-  for (const info of result.messages) {
-    core.info(info)
-  }
-  for (const warn of result.warnings) {
-    core.warning(warn)
-  }
-
-  if (result.errors.length > 0) {
-    for (const error of result.errors) {
-      core.error(error)
-    }
-    core.setFailed('Ultralight GitHub Action failed')
-  }
-}
-
-const handleReportCommit = async ({
-  ultralightApiKey,
-  ultralightUrl,
-  commitHash,
-  prUrl,
-  prDescriptionFilePath
-}: {
-  ultralightApiKey: string
-  ultralightUrl: string
-  commitHash: string
-  prUrl: string
-  prDescriptionFilePath: string
-}): Promise<void> => {
-  await reportCommit({
-    ultralightUrl,
-    ultralightApiKey,
-    pullRequestDescription: fs.readFileSync(prDescriptionFilePath, 'utf8'),
-    commit: {
-      hash: commitHash,
-      pullRequestUrl: prUrl
-    }
-  })
 }

@@ -25003,8 +25003,13 @@ async function run() {
         const prUrl = process.env.PR_URL || core.getInput('pr-url');
         const prDescriptionFilePath = process.env.PR_DESCRIPTION_FILE_PATH ||
             core.getInput('pr-description-file-path');
+        let result;
         if (command === 'reportTest') {
-            await handleReportTest({
+            if (!ultralightProductId)
+                throw new Error('command=reportTest requires input ultralight-product-id');
+            result = await (0, ultralight_core_1.report)({
+                buildUrl: (0, githubUtils_1.getGithubBuildUrl)(),
+                commitUrl: (0, githubUtils_1.getGithubCommitUrl)(),
                 testExecutionReportPath,
                 testProtocolDefinitionsDirPath,
                 ultralightProductId,
@@ -25012,15 +25017,37 @@ async function run() {
                 ultralightUrl
             });
         }
-        else {
-            // command === 'reportCommit'
-            await handleReportCommit({
-                ultralightApiKey,
+        else if (command === 'reportCommit') {
+            if (!commitHash)
+                throw new Error('command=reportCommit requires input commit-hash');
+            if (!prUrl)
+                throw new Error('command=reportCommit requires input pr-url');
+            if (!prDescriptionFilePath)
+                throw new Error('command=reportCommit requires input pr-description-file-path');
+            result = await (0, ultralight_core_1.reportCommit)({
                 ultralightUrl,
-                commitHash,
-                prUrl,
-                prDescriptionFilePath
+                ultralightApiKey,
+                pullRequestDescription: fs_1.default.readFileSync(prDescriptionFilePath, 'utf8'),
+                commit: {
+                    hash: commitHash,
+                    pullRequestUrl: prUrl
+                }
             });
+        }
+        else {
+            throw new Error(`Unknown command: ${command}`);
+        }
+        for (const info of result.messages) {
+            core.info(info);
+        }
+        for (const warn of result.warnings) {
+            core.warning(warn);
+        }
+        if (result.errors.length > 0) {
+            for (const error of result.errors) {
+                core.error(error);
+            }
+            core.setFailed('Ultralight GitHub Action failed');
         }
     }
     catch (error) {
@@ -25030,40 +25057,6 @@ async function run() {
     }
 }
 exports.run = run;
-const handleReportTest = async ({ testExecutionReportPath, testProtocolDefinitionsDirPath, ultralightProductId, ultralightApiKey, ultralightUrl }) => {
-    const result = await (0, ultralight_core_1.report)({
-        buildUrl: (0, githubUtils_1.getGithubBuildUrl)(),
-        commitUrl: (0, githubUtils_1.getGithubCommitUrl)(),
-        testExecutionReportPath,
-        testProtocolDefinitionsDirPath,
-        ultralightProductId,
-        ultralightApiKey,
-        ultralightUrl
-    });
-    for (const info of result.messages) {
-        core.info(info);
-    }
-    for (const warn of result.warnings) {
-        core.warning(warn);
-    }
-    if (result.errors.length > 0) {
-        for (const error of result.errors) {
-            core.error(error);
-        }
-        core.setFailed('Ultralight GitHub Action failed');
-    }
-};
-const handleReportCommit = async ({ ultralightApiKey, ultralightUrl, commitHash, prUrl, prDescriptionFilePath }) => {
-    await (0, ultralight_core_1.reportCommit)({
-        ultralightUrl,
-        ultralightApiKey,
-        pullRequestDescription: fs_1.default.readFileSync(prDescriptionFilePath, 'utf8'),
-        commit: {
-            hash: commitHash,
-            pullRequestUrl: prUrl
-        }
-    });
-};
 
 
 /***/ }),
@@ -25100,9 +25093,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getApiKey = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const getApiKey = () => {
-    const ultralightApiKey = process.env.UL_API_KEY
-        ? process.env.UL_API_KEY
-        : core.getInput('ultralight-api-key');
+    const ultralightApiKey = process.env.UL_API_KEY || core.getInput('ultralight-api-key');
     if (!ultralightApiKey) {
         throw new Error('Ultralight API key is required');
     }
