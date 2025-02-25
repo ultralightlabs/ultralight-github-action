@@ -11,7 +11,8 @@ branding:
 inputs:
   command:
     description: The command type. One of 'REPORT_TEST' or 'REPORT_COMMIT'.
-    required: true
+    required: false
+    default: REPORT_TEST
 
   ultralight-api-key:
     description: >-
