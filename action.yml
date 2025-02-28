@@ -46,31 +46,7 @@ inputs:
       instance.
     required: false
 
-  # command=REPORT_COMMIT
-  commit-hash:
-    description: >-
-      Required for command=REPORT_COMMIT. Commit hash queried from your github
-      action context. Query method varies depending on your workflow's event
-      trigger. See
-      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
-      for full examples conditioned on event trigger.
-    required: false
-  pr-url:
-    description: >-
-      PR URL queried from your github action context. Query method varies
-      depending on your workflow's event trigger. See
-      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
-      for full examples conditioned on event trigger.
-    required: false
-  pr-description-file-path:
-    description: >-
-      Required for command=REPORT_COMMIT. PR description queried from your
-      github action context. Query method varies depending on your workflow's
-      event trigger. See
-      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
-      for full examples conditioned on event trigger.
-    required: false
-
+  # for internal testing use
   ultralight-url:
     required: false
     description: For internal testing only.

@@ -1,8 +1,9 @@
 import * as core from '@actions/core'
+import * as github from '@actions/github'
+import type { PullRequestEvent } from '@octokit/webhooks-definitions/schema'
 import { getGithubBuildUrl, getGithubCommitUrl } from './githubUtils'
 import { getApiKey } from './utils'
 import { report as reportTest, reportCommit } from 'ultralight-core'
-import fs from 'fs'
 
 export async function run(): Promise<void> {
   try {
@@ -21,12 +22,6 @@ export async function run(): Promise<void> {
     const testExecutionReportPath =
       process.env.UL_TEST_EXECUTION_REPORT_PATH ||
       core.getInput('test-execution-report-path')
-
-    const commitHash = process.env.COMMIT_HASH || core.getInput('commit-hash')
-    const prUrl = process.env.PR_URL || core.getInput('pr-url')
-    const prDescriptionFilePath =
-      process.env.PR_DESCRIPTION_FILE_PATH ||
-      core.getInput('pr-description-file-path')
 
     let result: {
       messages: string[]
@@ -50,18 +45,25 @@ export async function run(): Promise<void> {
         ultralightUrl
       })
     } else if (command === 'REPORT_COMMIT') {
-      if (!commitHash)
-        throw new Error('command=REPORT_COMMIT requires input commit-hash')
-      if (!prUrl) throw new Error('command=REPORT_COMMIT requires input pr-url')
-      if (!prDescriptionFilePath)
+      if (github.context.eventName !== 'pull_request') {
         throw new Error(
-          'command=REPORT_COMMIT requires input pr-description-file-path'
+          'command=REPORT_COMMIT requires github pull_request event'
         )
+      }
+      const pullRequestEventPayload = github.context.payload as PullRequestEvent
+
+      const commitHash =
+        process.env.COMMIT_HASH || pullRequestEventPayload.pull_request.head.sha
+      const prUrl =
+        process.env.PR_URL || pullRequestEventPayload.pull_request.html_url
+      const prDescription =
+        process.env.PR_DESCRIPTION_FILE_PATH ||
+        pullRequestEventPayload.pull_request.body
 
       result = await reportCommit({
         ultralightUrl,
         ultralightApiKey,
-        pullRequestDescription: fs.readFileSync(prDescriptionFilePath, 'utf8'),
+        pullRequestDescription: prDescription,
         commit: {
           hash: commitHash,
           pullRequestUrl: prUrl
