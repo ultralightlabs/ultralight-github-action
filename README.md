@@ -76,27 +76,6 @@ steps:
     # This can be generated in the Ultralight web app's settings page. Store
     # this as a secret.
     ultralight-api-key: ${{secrets.ULTRALIGHT_GH_ACTION_API_KEY}}
-
-    # Required.
-    # Commit hash queried from your github action context. Query method varies depending on your
-    # workflow's event trigger.
-    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
-    # for full examples conditioned on event trigger.
-    commit-hash:
-
-    # Optional.
-    # PR URL queried from your github action context. Query method varies depending on your
-    # workflow's event trigger.
-    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
-    # for full examples conditioned on event trigger.
-    pr-url:
-
-    # Required.
-    # PR description queried from your github action context. Query method varies depending on your
-    # workflow's event trigger.
-    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
-    # for full examples conditioned on event trigger.
-    pr-description-file-path: pr-body.txt
 ```
 
 ## Integrating into your team's release process
