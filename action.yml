@@ -52,6 +52,14 @@ inputs:
     description: For internal testing only.
     default: https://app.ultralightlabs.com
 
+outputs:
+  merge-block:
+    description:
+      Whether a merge block is detected on any of your Ultralight Releases.
+  report-commit-data:
+    description:
+      Results of the commit report and merge block context, as a JSON string.
+
 runs:
   using: node20
   main: dist/index.js
