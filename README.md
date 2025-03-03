@@ -66,6 +66,7 @@ steps:
 
 ```yaml
 - if: always() # Runs even if previous steps fail
+  id: report-commit
   uses: ultralightlabs/ultralight-github-action@v1
   with:
     # Required.
@@ -76,6 +77,11 @@ steps:
     # This can be generated in the Ultralight web app's settings page. Store
     # this as a secret.
     ultralight-api-key: ${{secrets.ULTRALIGHT_GH_ACTION_API_KEY}}
+
+  # Use outputs as desired to handle merge block or other release context.
+- run: |
+    echo '${{ steps.report-commit.outputs.merge-block }}'
+    echo '${{ steps.report-commit.outputs.report-commit-data }}' | jq '.updatedSoftwarePartVersions'
 ```
 
 ## Integrating into your team's release process
