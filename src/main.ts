@@ -3,7 +3,11 @@ import * as github from '@actions/github'
 import type { PullRequestEvent } from '@octokit/webhooks-definitions/schema'
 import { getGithubBuildUrl, getGithubCommitUrl } from './githubUtils'
 import { getApiKey } from './utils'
-import { report as reportTest, reportCommit } from 'ultralight-core'
+import {
+  report as reportTest,
+  reportCommit,
+  UltralightApiResponse
+} from 'ultralight-core'
 
 export async function run(): Promise<void> {
   try {
@@ -23,11 +27,7 @@ export async function run(): Promise<void> {
       process.env.UL_TEST_EXECUTION_REPORT_PATH ||
       core.getInput('test-execution-report-path')
 
-    let result: {
-      messages: string[]
-      warnings: string[]
-      errors: string[]
-    }
+    let result: UltralightApiResponse
 
     if (command === 'REPORT_TEST') {
       if (!ultralightProductId)
@@ -69,6 +69,16 @@ export async function run(): Promise<void> {
           pullRequestUrl: prUrl
         }
       })
+
+      if (result.data) {
+        const data = result.data as {
+          mergeBlock: {
+            value: boolean
+          }
+        }
+        core.setOutput('merge-block', String(data.mergeBlock.value))
+        core.setOutput('report-commit-data', JSON.stringify(data))
+      }
     } else {
       throw new Error(`Unknown command: ${command}`)
     }

@@ -30060,6 +30060,11 @@ async function run() {
                     pullRequestUrl: prUrl
                 }
             });
+            if (result.data) {
+                const data = result.data;
+                core.setOutput('merge-block', String(data.mergeBlock.value));
+                core.setOutput('report-commit-data', JSON.stringify(data));
+            }
         }
         else {
             throw new Error(`Unknown command: ${command}`);
@@ -285948,14 +285953,19 @@ function reportCommit(_a) {
             const data = reportResult.data;
             messages.push(`Report Commit result: ${JSON.stringify(data, null, 2)}`);
             if (data.mergeBlock.value) {
-                errors.push(`Merge block detected. See missing release prerequisites in response details above.`);
+                warnings.push(`Merge block detected. See missing release prerequisites in response data.`);
             }
             if (data.errors) {
                 for (const error of data.errors) {
                     errors.push(error.message);
                 }
             }
-            return { errors, messages, warnings };
+            return {
+                data,
+                errors,
+                messages,
+                warnings
+            };
         }
         catch (error) {
             errors.push(...(0, utils_1.handleError)(error));
