@@ -72,11 +72,11 @@ export async function run(): Promise<void> {
 
       if (result.data) {
         const data = result.data as {
-          mergeBlock: {
+          mergeAllowed: {
             value: boolean
           }
         }
-        core.setOutput('merge-allowed', String(!data.mergeBlock.value))
+        core.setOutput('merge-allowed', String(!data.mergeAllowed.value))
         core.setOutput('report-commit-data', JSON.stringify(data))
       }
     } else {
