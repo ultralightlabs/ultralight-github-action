@@ -30062,7 +30062,7 @@ async function run() {
             });
             if (result.data) {
                 const data = result.data;
-                core.setOutput('merge-block', String(data.mergeBlock.value));
+                core.setOutput('merge-allowed', String(!data.mergeBlock.value));
                 core.setOutput('report-commit-data', JSON.stringify(data));
             }
         }

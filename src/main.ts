@@ -76,7 +76,7 @@ export async function run(): Promise<void> {
             value: boolean
           }
         }
-        core.setOutput('merge-block', String(data.mergeBlock.value))
+        core.setOutput('merge-allowed', String(!data.mergeBlock.value))
         core.setOutput('report-commit-data', JSON.stringify(data))
       }
     } else {
