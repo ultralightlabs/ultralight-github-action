@@ -81,7 +81,7 @@ steps:
   # Use outputs as desired to handle merge block or other release context.
 - run: |
     echo '${{ steps.report-commit.outputs.merge-allowed }}'
-    echo '${{ steps.report-commit.outputs.report-commit-data }}' | jq '.mergeBlock'
+    echo '${{ steps.report-commit.outputs.report-commit-data }}' | jq '.mergeAllowed'
     echo '${{ steps.report-commit.outputs.report-commit-data }}' | jq '.updatedSoftwarePartVersions'
 ```
 
