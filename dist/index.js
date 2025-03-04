@@ -285952,7 +285952,7 @@ function reportCommit(_a) {
             });
             const data = reportResult.data;
             messages.push(`Report Commit result: ${JSON.stringify(data, null, 2)}`);
-            if (data.mergeBlock.value) {
+            if (!data.mergeAllowed.value) {
                 warnings.push(`Merge block detected. See missing release prerequisites in response data.`);
             }
             if (data.errors) {
