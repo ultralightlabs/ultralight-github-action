@@ -53,9 +53,9 @@ inputs:
     default: https://app.ultralightlabs.com
 
 outputs:
-  merge-block:
+  merge-allowed:
     description:
-      Whether a merge block is detected on any of your Ultralight Releases.
+      Whether release prerequisites have been met on linked Ultralight Releases.
   report-commit-data:
     description:
       Results of the commit report and merge block context, as a JSON string.
