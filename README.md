@@ -85,6 +85,26 @@ steps:
     echo '${{ steps.report-commit.outputs.report-commit-data }}' | jq '.updatedSoftwarePartVersions'
 ```
 
+#### Release Definitions
+
+The `REPORT_COMMIT` command will read Ultralight Release details that you
+specify in your PR description. They must be specified in the following YAML
+format. You may want to add this example to your PR template:
+
+````yaml
+```ultralight
+releases:
+  - UL-RLS-X
+  - UL-RLS-Y
+software-parts:
+  - id: SW-PART-A
+    versions:
+      - 2
+  - id: SW-PART-B
+merge-block-override: # OPTIONAL. Must be one of SKIP_RELEASE_DOCUMENTATION or SKIP_VERSION_APPROVAL
+```
+````
+
 ## Integrating into your team's release process
 
 Example GitHub workflow triggers, depending on your team's GitHub process around
