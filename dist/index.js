@@ -285580,53 +285580,65 @@ class ReportCommit extends core_1.Command {
             // if (softwareParts.length === 0) {
             //   this.error('At least one software part must be specified')
             // }
+            let pullRequestUrl;
+            let commitHash;
+            let pullRequestDescription;
+            if (process.env.GITLAB_CI) {
+                pullRequestUrl =
+                    process.env.CI_MERGE_REQUEST_PROJECT_URL &&
+                        process.env.CI_MERGE_REQUEST_IID &&
+                        `${process.env.CI_MERGE_REQUEST_PROJECT_URL}/~/merge_requests/${process.env.CI_MERGE_REQUEST_IID}`;
+                commitHash = process.env.CI_COMMIT_SHA;
+                pullRequestDescription = process.env.CI_MERGE_REQUEST_DESCRIPTION;
+            }
+            else {
+                pullRequestUrl = flags.prUrl;
+                commitHash = flags.commitHash;
+                pullRequestDescription =
+                    flags.prDescriptionFilePath &&
+                        fs_1.default.readFileSync(flags.prDescriptionFilePath, 'utf8');
+            }
+            if (!pullRequestUrl) {
+                throw new Error('You must supply a pull/merge request URL via either a CI environment variable or the --prUrl flag');
+            }
+            if (!commitHash) {
+                throw new Error('You must supply a git commit hash via either a CI environment variable or the --commitHash flag');
+            }
+            if (!pullRequestDescription) {
+                throw new Error('You must supply a pull/merge request description via either a CI environment variable or the --prDescriptionFilePath flag');
+            }
             const commit = {
-                hash: flags.commitHash,
-                pullRequestUrl: flags.prUrl
+                hash: commitHash,
+                pullRequestUrl
             };
-            const pullRequestDescriptionFilePath = flags.prDescriptionFilePath;
-            const pullRequestDescription = fs_1.default.readFileSync(pullRequestDescriptionFilePath, 'utf8');
             // return promise so that oclif doesn't time out
             return (0, utils_1.handlePromise)(report_commit_1.reportCommit)({
                 ultralightApiKey,
                 ultralightUrl: flags.ultralightUrl,
                 commit,
-                pullRequestDescription
+                pullRequestDescription,
+                errorOnMergeBlockDetected: true
             }, (0, utils_1.createCommandLogger)(this));
         });
     }
 }
+ReportCommit.enableJsonFlag = true;
 ReportCommit.description = 'Report a commit to Ultralight and update related Software Parts and Releases';
 ReportCommit.examples = [
     '<%= config.bin %> <%= command.id %> -k abc123 -r UL-RLS-1,UL-RLS-2 -s id=SP1 -s id=SP2,version=1.0.0,version=2.0.0 -h c977f2c -p https://github.com/my-org/my-repo/pull/1'
 ];
 ReportCommit.flags = Object.assign(Object.assign({}, shared_flags_1.ultralightAccessFlags), { commitHash: core_1.Flags.string({
         char: 'h',
-        description: 'Git commit hash',
-        required: true
+        description: '(Not required in Gitlab CI) Git commit hash',
+        required: false
     }), prUrl: core_1.Flags.string({
         char: 'p',
-        description: 'Pull request URL',
+        description: '(Not required in Gitlab CI) Pull request URL',
         required: false
     }), prDescriptionFilePath: core_1.Flags.string({
         char: 'd',
-        description: `Path to file containing pull request description, which must include an Ultralight release specification YAML block.
-
-      Example YAML:
-
-      \`\`\`ultralight
-      merge-block-override: SKIP_RELEASE_DOCUMENTATION # OPTIONAL. Must be one of SKIP_RELEASE_DOCUMENTATION or SKIP_VERSION_APPROVAL
-      releases:
-        - UL-RLS-1
-        - UL-RLS-2
-      software-parts:
-        - id=WEB
-          versions:
-            - 2
-        - id=API
-      \`\`\`
-      `,
-        required: true
+        description: `(Not required in Gitlab CI) Path to file containing pull request description, which must include an Ultralight release specification YAML block. ${report_commit_1.ultralightYamlExample}`,
+        required: false
     }) });
 exports["default"] = ReportCommit;
 
@@ -285780,7 +285792,7 @@ exports.ultralightAccessFlags = {
     }),
     ultralightUrl: core_1.Flags.string({
         char: 'u',
-        description: 'The Ultralight URL.',
+        description: '(For internal developer use.) The Ultralight URL.',
         required: false,
         default: 'https://app.ultralightlabs.com'
     })
@@ -285827,7 +285839,7 @@ const handlePromise = (reportFn) => {
         if (result.errors.length > 0) {
             error(`Errors: ${result.errors.join('\n')}`);
         }
-        return;
+        return result.data;
     });
 };
 exports.handlePromise = handlePromise;
@@ -285895,6 +285907,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ultralightYamlExample = void 0;
 exports.reportCommit = reportCommit;
 const axios_1 = __importDefault(__nccwpck_require2_(88757));
 const utils_1 = __nccwpck_require2_(71314);
@@ -285904,41 +285917,50 @@ const ultralightYamlZodSchema = zod_1.z.object({
     'merge-block-override': zod_1.z
         .enum(['SKIP_RELEASE_DOCUMENTATION', 'SKIP_VERSION_APPROVAL'])
         .optional(),
-    releases: zod_1.z.array(zod_1.z.string()),
+    releases: zod_1.z.array(zod_1.z.string().regex(/^UL-RLS-\d+$/)),
     'software-parts': zod_1.z.array(zod_1.z.object({
         id: zod_1.z.string(),
         versions: zod_1.z.array(zod_1.z.union([zod_1.z.string(), zod_1.z.number()])).optional()
     }))
 });
+// Updates to this example should be copied over to our ultralight-github-action README.md
+exports.ultralightYamlExample = `
+Example YAML:
+
+\`\`\`ultralight
+releases:
+  - UL-RLS-X
+  - UL-RLS-Y
+software-parts:
+  - id: SW-PART-A
+    versions:
+      - 2
+  - id: SW-PART-B
+merge-block-override: # OPTIONAL. Must be one of SKIP_RELEASE_DOCUMENTATION or SKIP_VERSION_APPROVAL
+\`\`\`
+`;
 function reportCommit(_a) {
-    return __awaiter(this, arguments, void 0, function* ({ ultralightUrl, ultralightApiKey, pullRequestDescription, commit }) {
+    return __awaiter(this, arguments, void 0, function* ({ ultralightUrl, ultralightApiKey, pullRequestDescription, commit, errorOnMergeBlockDetected }) {
         const errors = [];
         const messages = [];
         const warnings = [];
         const regexResult = /```ultralight([^]*)```/.exec(pullRequestDescription);
         if (!regexResult) {
-            errors.push('Missing ultralight YAML block in pull request description');
-            return { errors, messages, warnings };
-        }
-        let parsedYaml;
-        try {
-            parsedYaml = yaml_1.default.parse(regexResult[1]);
-        }
-        catch (error) {
-            errors.push('Invalid YAML in pull request description');
+            errors.push(`Missing ultralight YAML block in pull request description. ${exports.ultralightYamlExample}`);
             return { errors, messages, warnings };
         }
         let mergeBlockOverride;
         let releases;
         let softwareParts;
         try {
+            const parsedYaml = yaml_1.default.parse(regexResult[1]);
             const zodParseResult = ultralightYamlZodSchema.parse(parsedYaml);
             mergeBlockOverride = zodParseResult['merge-block-override'];
             releases = zodParseResult.releases;
             softwareParts = zodParseResult['software-parts'];
         }
         catch (error) {
-            errors.push(...(0, utils_1.handleError)(error));
+            errors.push(`Invalid YAML in pull request description. ${exports.ultralightYamlExample}`);
             return { errors, messages, warnings };
         }
         try {
@@ -285953,7 +285975,13 @@ function reportCommit(_a) {
             const data = reportResult.data;
             messages.push(`Report Commit result: ${JSON.stringify(data, null, 2)}`);
             if (!data.mergeAllowed.value) {
-                warnings.push(`Merge block detected. See missing release prerequisites in response data.`);
+                const info = `Merge block detected. See missing release prerequisites in response data.`;
+                if (errorOnMergeBlockDetected) {
+                    errors.push(info);
+                }
+                else {
+                    warnings.push(info);
+                }
             }
             if (data.errors) {
                 for (const error of data.errors) {
