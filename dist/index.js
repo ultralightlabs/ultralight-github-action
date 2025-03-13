@@ -29948,6 +29948,135 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 9099:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.reportCommitCommand = void 0;
+const core = __importStar(__nccwpck_require__(2186));
+const github = __importStar(__nccwpck_require__(5438));
+const ultralight_core_1 = __nccwpck_require__(8174);
+async function reportCommitCommand(ultralightUrl, ultralightApiKey) {
+    if (!github.context.payload.pull_request) {
+        throw new Error('command=REPORT_COMMIT requires pull_request in github context');
+    }
+    const pullRequestPayload = github.context.payload.pull_request;
+    const commitHash = process.env.COMMIT_HASH || pullRequestPayload.head.sha;
+    const prUrl = process.env.PR_URL || pullRequestPayload.html_url;
+    const prDescription = process.env.PR_DESCRIPTION_FILE_PATH || pullRequestPayload.body;
+    if (!prDescription) {
+        throw new Error('command=REPORT_COMMIT requires PR_DESCRIPTION_FILE_PATH or pull_request.body');
+    }
+    if (!prUrl) {
+        throw new Error('command=REPORT_COMMIT requires PR_URL or pull_request.html_url');
+    }
+    if (!commitHash) {
+        throw new Error('command=REPORT_COMMIT requires COMMIT_HASH or pull_request.head.sha');
+    }
+    const result = await (0, ultralight_core_1.reportCommit)({
+        ultralightUrl,
+        ultralightApiKey,
+        pullRequestDescription: prDescription,
+        commit: {
+            hash: commitHash,
+            pullRequestUrl: prUrl
+        }
+    });
+    if (result.data) {
+        const data = result.data;
+        core.setOutput('merge-allowed', String(data.mergeAllowed.value));
+        core.setOutput('report-commit-data', JSON.stringify(data));
+    }
+    return result;
+}
+exports.reportCommitCommand = reportCommitCommand;
+
+
+/***/ }),
+
+/***/ 8722:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.reportTestCommand = void 0;
+const githubUtils_1 = __nccwpck_require__(5133);
+const ultralight_core_1 = __nccwpck_require__(8174);
+const core = __importStar(__nccwpck_require__(2186));
+async function reportTestCommand({ ultralightApiKey, ultralightUrl }) {
+    const ultralightProductId = parseInt(process.env.UL_PRODUCT_ID || core.getInput('ultralight-product-id'));
+    const testProtocolDefinitionsDirPath = process.env.UL_TEST_PROTOCOL_DEFINITIONS_DIRECTORY_PATH ||
+        core.getInput('test-protocol-definitions-directory-path');
+    const testExecutionReportPath = process.env.UL_TEST_EXECUTION_REPORT_PATH ||
+        core.getInput('test-execution-report-path');
+    if (!ultralightProductId) {
+        throw new Error('command=REPORT_TEST requires input ultralight-product-id');
+    }
+    const result = await (0, ultralight_core_1.report)({
+        buildUrl: (0, githubUtils_1.getGithubBuildUrl)(),
+        commitUrl: (0, githubUtils_1.getGithubCommitUrl)(),
+        testExecutionReportPath,
+        testProtocolDefinitionsDirPath,
+        ultralightProductId,
+        ultralightApiKey,
+        ultralightUrl
+    });
+    return result;
+}
+exports.reportTestCommand = reportTestCommand;
+
+
+/***/ }),
+
 /***/ 5133:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -30014,60 +30143,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
-const github = __importStar(__nccwpck_require__(5438));
-const githubUtils_1 = __nccwpck_require__(5133);
 const utils_1 = __nccwpck_require__(1314);
-const ultralight_core_1 = __nccwpck_require__(8174);
+const reportCommit_1 = __nccwpck_require__(9099);
+const reportTest_1 = __nccwpck_require__(8722);
 async function run() {
     try {
         const command = process.env.COMMAND || core.getInput('command');
         const ultralightApiKey = (0, utils_1.getApiKey)();
-        const ultralightProductId = parseInt(process.env.UL_PRODUCT_ID || core.getInput('ultralight-product-id'));
         const ultralightUrl = process.env.ULTRALIGHT_URL || core.getInput('ultralight-url');
-        const testProtocolDefinitionsDirPath = process.env.UL_TEST_PROTOCOL_DEFINITIONS_DIRECTORY_PATH ||
-            core.getInput('test-protocol-definitions-directory-path');
-        const testExecutionReportPath = process.env.UL_TEST_EXECUTION_REPORT_PATH ||
-            core.getInput('test-execution-report-path');
         let result;
-        if (command === 'REPORT_TEST') {
-            if (!ultralightProductId)
-                throw new Error('command=REPORT_TEST requires input ultralight-product-id');
-            result = await (0, ultralight_core_1.report)({
-                buildUrl: (0, githubUtils_1.getGithubBuildUrl)(),
-                commitUrl: (0, githubUtils_1.getGithubCommitUrl)(),
-                testExecutionReportPath,
-                testProtocolDefinitionsDirPath,
-                ultralightProductId,
-                ultralightApiKey,
-                ultralightUrl
-            });
-        }
-        else if (command === 'REPORT_COMMIT') {
-            if (github.context.eventName !== 'pull_request') {
-                throw new Error('command=REPORT_COMMIT requires github pull_request event');
-            }
-            const pullRequestEventPayload = github.context.payload;
-            const commitHash = process.env.COMMIT_HASH || pullRequestEventPayload.pull_request.head.sha;
-            const prUrl = process.env.PR_URL || pullRequestEventPayload.pull_request.html_url;
-            const prDescription = process.env.PR_DESCRIPTION_FILE_PATH ||
-                pullRequestEventPayload.pull_request.body;
-            result = await (0, ultralight_core_1.reportCommit)({
-                ultralightUrl,
-                ultralightApiKey,
-                pullRequestDescription: prDescription,
-                commit: {
-                    hash: commitHash,
-                    pullRequestUrl: prUrl
-                }
-            });
-            if (result.data) {
-                const data = result.data;
-                core.setOutput('merge-allowed', String(data.mergeAllowed.value));
-                core.setOutput('report-commit-data', JSON.stringify(data));
-            }
-        }
-        else {
-            throw new Error(`Unknown command: ${command}`);
+        switch (command) {
+            case 'REPORT_TEST':
+                result = await (0, reportTest_1.reportTestCommand)({
+                    ultralightApiKey,
+                    ultralightUrl
+                });
+                break;
+            case 'REPORT_COMMIT':
+                result = await (0, reportCommit_1.reportCommitCommand)(ultralightUrl, ultralightApiKey);
+                break;
+            default:
+                throw new Error(`Unknown command: ${command}`);
         }
         for (const info of result.messages) {
             core.info(info);

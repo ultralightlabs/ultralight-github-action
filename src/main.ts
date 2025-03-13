@@ -1,86 +1,31 @@
 import * as core from '@actions/core'
-import * as github from '@actions/github'
-import type { PullRequestEvent } from '@octokit/webhooks-definitions/schema'
-import { getGithubBuildUrl, getGithubCommitUrl } from './githubUtils'
 import { getApiKey } from './utils'
-import {
-  report as reportTest,
-  reportCommit,
-  UltralightApiResponse
-} from 'ultralight-core'
+import { UltralightApiResponse } from 'ultralight-core'
+import { reportCommitCommand } from './commands/reportCommit'
+import { reportTestCommand } from './commands/reportTest'
 
 export async function run(): Promise<void> {
   try {
     const command = process.env.COMMAND || core.getInput('command')
 
     const ultralightApiKey = getApiKey()
-    const ultralightProductId = parseInt(
-      process.env.UL_PRODUCT_ID || core.getInput('ultralight-product-id')
-    )
     const ultralightUrl =
       process.env.ULTRALIGHT_URL || core.getInput('ultralight-url')
 
-    const testProtocolDefinitionsDirPath =
-      process.env.UL_TEST_PROTOCOL_DEFINITIONS_DIRECTORY_PATH ||
-      core.getInput('test-protocol-definitions-directory-path')
-    const testExecutionReportPath =
-      process.env.UL_TEST_EXECUTION_REPORT_PATH ||
-      core.getInput('test-execution-report-path')
-
     let result: UltralightApiResponse
 
-    if (command === 'REPORT_TEST') {
-      if (!ultralightProductId)
-        throw new Error(
-          'command=REPORT_TEST requires input ultralight-product-id'
-        )
-
-      result = await reportTest({
-        buildUrl: getGithubBuildUrl(),
-        commitUrl: getGithubCommitUrl(),
-        testExecutionReportPath,
-        testProtocolDefinitionsDirPath,
-        ultralightProductId,
-        ultralightApiKey,
-        ultralightUrl
-      })
-    } else if (command === 'REPORT_COMMIT') {
-      if (github.context.eventName !== 'pull_request') {
-        throw new Error(
-          'command=REPORT_COMMIT requires github pull_request event'
-        )
-      }
-      const pullRequestEventPayload = github.context.payload as PullRequestEvent
-
-      const commitHash =
-        process.env.COMMIT_HASH || pullRequestEventPayload.pull_request.head.sha
-      const prUrl =
-        process.env.PR_URL || pullRequestEventPayload.pull_request.html_url
-      const prDescription =
-        process.env.PR_DESCRIPTION_FILE_PATH ||
-        pullRequestEventPayload.pull_request.body
-
-      result = await reportCommit({
-        ultralightUrl,
-        ultralightApiKey,
-        pullRequestDescription: prDescription,
-        commit: {
-          hash: commitHash,
-          pullRequestUrl: prUrl
-        }
-      })
-
-      if (result.data) {
-        const data = result.data as {
-          mergeAllowed: {
-            value: boolean
-          }
-        }
-        core.setOutput('merge-allowed', String(data.mergeAllowed.value))
-        core.setOutput('report-commit-data', JSON.stringify(data))
-      }
-    } else {
-      throw new Error(`Unknown command: ${command}`)
+    switch (command) {
+      case 'REPORT_TEST':
+        result = await reportTestCommand({
+          ultralightApiKey,
+          ultralightUrl
+        })
+        break
+      case 'REPORT_COMMIT':
+        result = await reportCommitCommand(ultralightUrl, ultralightApiKey)
+        break
+      default:
+        throw new Error(`Unknown command: ${command}`)
     }
 
     for (const info of result.messages) {
