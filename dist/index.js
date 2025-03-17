@@ -30011,6 +30011,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const core = __importStar(__nccwpck_require__(2186));
@@ -30018,6 +30021,7 @@ const github = __importStar(__nccwpck_require__(5438));
 const githubUtils_1 = __nccwpck_require__(5133);
 const utils_1 = __nccwpck_require__(1314);
 const ultralight_core_1 = __nccwpck_require__(8174);
+const fs_1 = __importDefault(__nccwpck_require__(7147));
 async function run() {
     try {
         const command = process.env.COMMAND || core.getInput('command');
@@ -30044,11 +30048,25 @@ async function run() {
         }
         else if (command === 'REPORT_COMMIT') {
             const pullRequestEventPayload = github.context.payload;
-            const commitHash = process.env.COMMIT_HASH || pullRequestEventPayload.pull_request.head.sha;
-            const prUrl = process.env.PR_URL || pullRequestEventPayload.pull_request.html_url;
-            const prDescription = process.env.PR_DESCRIPTION_FILE_PATH ||
-                pullRequestEventPayload.pull_request.body;
-            const isMergeCommit = (process.env.IS_MERGE_COMMIT ?? '').toLowerCase() === 'true' ||
+            let commitHash = core.getInput('commit-hash');
+            let prUrl = core.getInput('pr-url');
+            let prDescription = null;
+            const prDescriptionFilePath = process.env.PR_DESCRIPTION_FILE_PATH ||
+                core.getInput('pr-description-file-path');
+            if (prDescriptionFilePath) {
+                prDescription = fs_1.default.readFileSync(prDescriptionFilePath, 'utf8');
+            }
+            console.log('commitHash', commitHash);
+            console.log('prUrl', prUrl);
+            console.log('prDescription', prDescription);
+            console.log('pullRequestEventPayload', pullRequestEventPayload);
+            if (!(commitHash && prUrl && prDescription) && !pullRequestEventPayload) {
+                throw new Error('command=REPORT_COMMIT requires env variables COMMIT_HASH, PR_URL, and PR_DESCRIPTION_FILE_PATH to be set when not triggered by a pull_request event');
+            }
+            commitHash = commitHash || pullRequestEventPayload.pull_request.head.sha;
+            prUrl = prUrl || pullRequestEventPayload.pull_request.html_url;
+            prDescription = prDescription || pullRequestEventPayload.pull_request.body;
+            const isMergeCommit = core.getInput('is-merge-commit').toLowerCase() === 'true' ||
                 pullRequestEventPayload.pull_request.merged === true;
             result = await (0, ultralight_core_1.reportCommit)({
                 ultralightUrl,
