@@ -45,11 +45,6 @@ export async function run(): Promise<void> {
         ultralightUrl
       })
     } else if (command === 'REPORT_COMMIT') {
-      if (github.context.eventName !== 'pull_request') {
-        throw new Error(
-          'command=REPORT_COMMIT requires github pull_request event'
-        )
-      }
       const pullRequestEventPayload = github.context.payload as PullRequestEvent
 
       const commitHash =
@@ -59,6 +54,9 @@ export async function run(): Promise<void> {
       const prDescription =
         process.env.PR_DESCRIPTION_FILE_PATH ||
         pullRequestEventPayload.pull_request.body
+      const isMergeCommit =
+        (process.env.IS_MERGE_COMMIT ?? '').toLowerCase() === 'true' ||
+        pullRequestEventPayload.pull_request.merged === true
 
       result = await reportCommit({
         ultralightUrl,
@@ -66,7 +64,8 @@ export async function run(): Promise<void> {
         pullRequestDescription: prDescription,
         commit: {
           hash: commitHash,
-          pullRequestUrl: prUrl
+          pullRequestUrl: prUrl,
+          isMergeCommit
         }
       })
 

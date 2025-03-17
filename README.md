@@ -78,6 +78,40 @@ steps:
     # this as a secret.
     ultralight-api-key: ${{secrets.ULTRALIGHT_GH_ACTION_API_KEY}}
 
+    # The variables below are included automatically in the context of `pull_request` events.
+    # If your build triggers off a non-`pull_request` event, you will need to supply the below variables,
+    # which may involve additional requests to the GitHub API.
+    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
+    # for full examples conditioned on event trigger.
+
+    # Required if your trigger is not a `pull_request` event.
+    # Commit hash queried from your github action context. Query method varies depending on your
+    # workflow's event trigger.
+    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
+    # for full examples conditioned on event trigger.
+    commit-hash:
+
+    # Required if your trigger is not a `pull_request` event.
+    # PR URL queried from your github action context. Query method varies depending on your
+    # workflow's event trigger.
+    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
+    # for full examples conditioned on event trigger.
+    pr-url:
+
+    # Required if your trigger is not a `pull_request` event.
+    # PR description queried from your github action context. Query method varies depending on your
+    # workflow's event trigger.
+    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
+    # for full examples conditioned on event trigger.
+    pr-description-file-path: pr-body.txt
+
+    # Can be supplied optionally if your trigger is not a `pull_request` event.
+    # Whether the supplied commit is a `merge` commit, queried from your github action context. Query method varies depending on your
+    # workflow's event trigger.
+    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
+    # for full examples conditioned on event trigger.
+    is-merge-commit:
+
   # Use outputs as desired to handle merge block or other release context.
 - run: |
     echo '${{ steps.report-commit.outputs.merge-allowed }}'
@@ -121,7 +155,17 @@ on:
     types: [prereleased]
 ```
 
-### Pull Request with Label
+### Pull Request
+
+This will trigger when you open, edit, reopen, or push to a PR.
+
+```yaml
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+```
+
+### Merge (push to main)
 
 This will trigger when you merge a feature branch or push a commit to main.
 

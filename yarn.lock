@@ -6518,7 +6518,7 @@ __metadata:
     prettier-eslint: ^16.3.0
     ts-jest: ^29.1.2
     typescript: ^5.4.5
-    ultralight-core: 0.2.5
+    ultralight-core: canary
   languageName: unknown
   linkType: soft
 
@@ -6542,9 +6542,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ultralight-core@npm:0.2.5":
-  version: 0.2.5
-  resolution: "ultralight-core@npm:0.2.5"
+"ultralight-core@npm:canary":
+  version: 0.2.6-canary.0
+  resolution: "ultralight-core@npm:0.2.6-canary.0"
   dependencies:
     "@oclif/core": ^4.0.18
     "@types/archiver": ^6.0.2
@@ -6555,7 +6555,7 @@ __metadata:
     zod: ^3.24.2
   bin:
     ultralight-core: bin/run.js
-  checksum: 4d6ed64b27c7550410d5a725c101419635ba5aea6ac402fa4ba468ae9a5581bd4c5341fc821a000a061e33c76c3460eb46f684314a1efe5b5664b983ce680d41
+  checksum: 59df86d9f9c8753afbd6a5dfe6bebee04c68383cfc3a6f946463a2d93b226ea7dc30f86de42274e5fbf1af9abbaadebad2097569dc2f3b54f8335c679c62cb2f
   languageName: node
   linkType: hard
 
