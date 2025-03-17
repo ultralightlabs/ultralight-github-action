@@ -47,13 +47,20 @@ export async function run(): Promise<void> {
     } else if (command === 'REPORT_COMMIT') {
       const pullRequestEventPayload = github.context.payload as PullRequestEvent
 
-      const commitHash =
-        process.env.COMMIT_HASH || pullRequestEventPayload.pull_request.head.sha
-      const prUrl =
-        process.env.PR_URL || pullRequestEventPayload.pull_request.html_url
-      const prDescription =
-        process.env.PR_DESCRIPTION_FILE_PATH ||
-        pullRequestEventPayload.pull_request.body
+      let commitHash = process.env.COMMIT_HASH
+      let prUrl = process.env.PR_URL
+      let prDescription = process.env.PR_DESCRIPTION_FILE_PATH
+
+      if (!(commitHash && prUrl && prDescription) && !pullRequestEventPayload) {
+        throw new Error(
+          'command=REPORT_COMMIT requires env variables COMMIT_HASH, PR_URL, and PR_DESCRIPTION_FILE_PATH to be set when not triggered by a pull_request event'
+        )
+      }
+
+      commitHash = commitHash || pullRequestEventPayload.pull_request.head.sha
+      prUrl = prUrl || pullRequestEventPayload.pull_request.html_url
+      prDescription = prDescription || pullRequestEventPayload.pull_request.body
+
       const isMergeCommit =
         (process.env.IS_MERGE_COMMIT ?? '').toLowerCase() === 'true' ||
         pullRequestEventPayload.pull_request.merged === true
