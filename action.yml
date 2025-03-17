@@ -46,6 +46,41 @@ inputs:
       instance.
     required: false
 
+  # command=REPORT_COMMIT
+  commit-hash:
+    description: >-
+      Required if your trigger is not a `pull_request` event. Commit hash
+      queried from your github action context. Query method varies depending on
+      your workflow's event trigger. See
+      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
+      for full examples conditioned on event trigger.
+    required: false
+  pr-url:
+    description: >-
+      Required if your trigger is not a `pull_request` event. PR URL queried
+      from your github action context. Query method varies depending on your
+      workflow's event trigger. See
+      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
+      for full examples conditioned on event trigger.
+    required: false
+  pr-description-file-path:
+    description: >-
+      Required if your trigger is not a `pull_request` event. PR description
+      queried from your github action context. Query method varies depending on
+      your workflow's event trigger. See
+      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
+      for full examples conditioned on event trigger.
+    required: false
+  is-merge-commit:
+    description: >-
+      Can be supplied optionally if your trigger is not a `pull_request` event.
+      Whether the supplied commit is a `merge` commit, queried from your github
+      action context. Query method varies depending on your workflow's event
+      trigger. See
+      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit.yml
+      for full examples conditioned on event trigger.
+    required: false
+
   # for internal testing use
   ultralight-url:
     required: false

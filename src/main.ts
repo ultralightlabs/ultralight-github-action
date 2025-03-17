@@ -8,7 +8,7 @@ import {
   reportCommit,
   UltralightApiResponse
 } from 'ultralight-core'
-
+import fs from 'fs'
 export async function run(): Promise<void> {
   try {
     const command = process.env.COMMAND || core.getInput('command')
@@ -47,15 +47,33 @@ export async function run(): Promise<void> {
     } else if (command === 'REPORT_COMMIT') {
       const pullRequestEventPayload = github.context.payload as PullRequestEvent
 
-      const commitHash =
-        process.env.COMMIT_HASH || pullRequestEventPayload.pull_request.head.sha
-      const prUrl =
-        process.env.PR_URL || pullRequestEventPayload.pull_request.html_url
-      const prDescription =
+      let commitHash = process.env.COMMIT_HASH || core.getInput('commit-hash')
+      let prUrl = process.env.PR_URL || core.getInput('pr-url')
+      let prDescription: string | null = null
+
+      const prDescriptionFilePath =
         process.env.PR_DESCRIPTION_FILE_PATH ||
-        pullRequestEventPayload.pull_request.body
+        core.getInput('pr-description-file-path')
+      if (prDescriptionFilePath) {
+        prDescription = fs.readFileSync(prDescriptionFilePath, 'utf8')
+      }
+
+      if (!(commitHash && prUrl && prDescription) && !pullRequestEventPayload) {
+        throw new Error(
+          'command=REPORT_COMMIT requires env variables COMMIT_HASH, PR_URL, and PR_DESCRIPTION_FILE_PATH to be set when not triggered by a pull_request event'
+        )
+      }
+
+      commitHash = commitHash || pullRequestEventPayload.pull_request.head.sha
+      prUrl = prUrl || pullRequestEventPayload.pull_request.html_url
+      prDescription = prDescription || pullRequestEventPayload.pull_request.body
+
       const isMergeCommit =
-        (process.env.IS_MERGE_COMMIT ?? '').toLowerCase() === 'true' ||
+        (
+          process.env.IS_MERGE_COMMIT ||
+          core.getInput('is-merge-commit') ||
+          ''
+        ).toLowerCase() === 'true' ||
         pullRequestEventPayload.pull_request.merged === true
 
       result = await reportCommit({
