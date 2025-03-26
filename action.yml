@@ -20,6 +20,26 @@ inputs:
       this as a secret.
     required: true
 
+  commit-hash:
+    description: >-
+      Required for REPORT_COMMIT command and recommended for REPORT_TEST command
+       (to enable Release module integrations) if your trigger is not a
+      `pull_request` event.  Commit hash queried from your github action
+      context. Query method varies depending on your workflow's event trigger.
+      See
+      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
+      for full examples conditioned on event trigger.
+    required: false
+  pr-url:
+    description: >-
+      Required for REPORT_COMMIT command and recommended for REPORT_TEST command
+       (to enable Release module integrations) if your trigger is not a
+      `pull_request` event.  PR URL queried from your github action context.
+      Query method varies depending on your workflow's event trigger. See
+      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
+      for full examples conditioned on event trigger.
+    required: false
+
   # command=REPORT_TEST
   ultralight-product-id:
     description: >-
@@ -47,22 +67,6 @@ inputs:
     required: false
 
   # command=REPORT_COMMIT
-  commit-hash:
-    description: >-
-      Required if your trigger is not a `pull_request` event. Commit hash
-      queried from your github action context. Query method varies depending on
-      your workflow's event trigger. See
-      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
-      for full examples conditioned on event trigger.
-    required: false
-  pr-url:
-    description: >-
-      Required if your trigger is not a `pull_request` event. PR URL queried
-      from your github action context. Query method varies depending on your
-      workflow's event trigger. See
-      https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
-      for full examples conditioned on event trigger.
-    required: false
   pr-description-file-path:
     description: >-
       Required if your trigger is not a `pull_request` event. PR description

@@ -30033,12 +30033,18 @@ async function run() {
         const testExecutionReportPath = process.env.UL_TEST_EXECUTION_REPORT_PATH ||
             core.getInput('test-execution-report-path');
         let result;
+        const pullRequestEventPayload = github.context.payload
+            .pull_request;
+        const commitHash = core.getInput('commit-hash') || pullRequestEventPayload?.head?.sha;
+        const prUrl = core.getInput('pr-url') || pullRequestEventPayload?.html_url;
         if (command === 'REPORT_TEST') {
             if (!ultralightProductId)
                 throw new Error('command=REPORT_TEST requires input ultralight-product-id');
             result = await (0, ultralight_core_1.report)({
                 buildUrl: (0, githubUtils_1.getGithubBuildUrl)(),
                 commitUrl: (0, githubUtils_1.getGithubCommitUrl)(),
+                commitHash,
+                pullRequestUrl: prUrl,
                 testExecutionReportPath,
                 testProtocolDefinitionsDirPath,
                 ultralightProductId,
@@ -30047,22 +30053,16 @@ async function run() {
             });
         }
         else if (command === 'REPORT_COMMIT') {
-            const pullRequestEventPayload = github.context.payload
-                .pull_request;
-            let commitHash = core.getInput('commit-hash');
-            let prUrl = core.getInput('pr-url');
             let prDescription = null;
             const prDescriptionFilePath = process.env.PR_DESCRIPTION_FILE_PATH ||
                 core.getInput('pr-description-file-path');
             if (prDescriptionFilePath) {
                 prDescription = fs_1.default.readFileSync(prDescriptionFilePath, 'utf8');
             }
-            if (!(commitHash && prUrl && prDescription) && !pullRequestEventPayload) {
+            prDescription = prDescription || pullRequestEventPayload?.body;
+            if (!(commitHash && prUrl && prDescription)) {
                 throw new Error('command=REPORT_COMMIT requires env variables COMMIT_HASH, PR_URL, and PR_DESCRIPTION_FILE_PATH to be set when not triggered by a pull_request event');
             }
-            commitHash = commitHash || pullRequestEventPayload.head.sha;
-            prUrl = prUrl || pullRequestEventPayload.html_url;
-            prDescription = prDescription || pullRequestEventPayload.body;
             const isMergeCommit = core.getInput('is-merge-commit').toLowerCase() === 'true' ||
                 pullRequestEventPayload.merged === true;
             result = await (0, ultralight_core_1.reportCommit)({
@@ -294255,7 +294255,7 @@ Report.examples = [
     '<%= config.bin %> <%= command.id %> -k abc123 -c https://github.com/owner/repo/commit/1234 -b https://github.com/owner/repo/actions/runs/1234 -q https://github.com/owner/repo/pull/1234 -f testExecutions.json',
     `<%= config.bin %> <%= command.id %> -k abc123 -c https://github.com/owner/repo/commit/1234 -b https://github.com/owner/repo/actions/runs/1234 -q https://github.com/owner/repo/pull/1234 -j '[{"testId": "VER-1", "passed": true, "filePaths": ["test_evidence/VER-1.docx"], "ultralightProductId": 1}]'`
 ];
-Report.flags = Object.assign(Object.assign({ testExecutionsJsonPath: core_1.Flags.string({
+Report.flags = Object.assign({ testExecutionsJsonPath: core_1.Flags.string({
         char: 'f',
         description: 'Test Executions JSON filepath - path to the JSON file containing the array of test executions \
         (see description for test execution format, do not combine with a JSON string  -j input)'
@@ -294263,7 +294263,19 @@ Report.flags = Object.assign(Object.assign({ testExecutionsJsonPath: core_1.Flag
         char: 'j',
         description: 'Test Executions JSON string - raw JSON string containing the array of test executions \
           (see description for test execution format, do not combine with a JSON file  -f input)'
-    }) }, shared_flags_1.ultralightAccessFlags), shared_flags_1.versionControlFlags);
+    }), commitUrl: core_1.Flags.string({
+        char: 'c',
+        description: 'Commit URL. This will be used in Ultralight as the Unit Under Test'
+    }), buildUrl: core_1.Flags.string({
+        char: 'b',
+        description: 'Build URL. This will be used in Ultralight to link out to the build for traceability'
+    }), pullRequestUrl: core_1.Flags.string({
+        char: 'q',
+        description: 'Pull Request URL. This will be used in Ultralight to link out to the pull request for traceability'
+    }), commitHash: core_1.Flags.string({
+        char: 'h',
+        description: 'Commit Hash. This will be used in Ultralight to link out to the commit for traceability'
+    }) }, shared_flags_1.ultralightAccessFlags);
 exports["default"] = Report;
 
 
@@ -294307,7 +294319,7 @@ Report.description = 'Report test documentation and test result XML file to Ultr
 Report.examples = [
     '<%= config.bin %> <%= command.id %> -p 1 -k abc123 -c https://github.com/owner/repo/commit/1234 -b https://github.com/owner/repo/actions/runs/1234 -q https://github.com/owner/repo/pull/1234 -r junit-test-report.xml'
 ];
-Report.flags = Object.assign(Object.assign({ ultralightProductId: core_1.Flags.integer({
+Report.flags = Object.assign({ ultralightProductId: core_1.Flags.integer({
         char: 'p',
         description: 'Ultralight Product ID. This is the Ultralight Product ID that the report will be associated with',
         required: true
@@ -294320,10 +294332,21 @@ Report.flags = Object.assign(Object.assign({ ultralightProductId: core_1.Flags.i
     }), cucumberFeaturesDirPath: core_1.Flags.string({
         char: 'm',
         description: 'Cucumber Features Directory Path. This is the path to the directory containing the cucumber features'
-    }) }, shared_flags_1.ultralightAccessFlags), Object.fromEntries(Object.entries(shared_flags_1.versionControlFlags).map(([key, value]) => [
-    key,
-    Object.assign(Object.assign({}, value), { required: true })
-])));
+    }), commitUrl: core_1.Flags.string({
+        char: 'c',
+        description: 'Commit URL. This will be used in Ultralight as the Unit Under Test',
+        required: true
+    }), buildUrl: core_1.Flags.string({
+        char: 'b',
+        description: 'Build URL. This will be used in Ultralight to link out to the build for traceability',
+        required: true
+    }), pullRequestUrl: core_1.Flags.string({
+        char: 'q',
+        description: 'Pull Request URL. This will be used in Ultralight to link out to the pull request for traceability'
+    }), commitHash: core_1.Flags.string({
+        char: 'h',
+        description: 'Commit Hash. This will be used in Ultralight to link out to the commit for traceability'
+    }) }, shared_flags_1.ultralightAccessFlags);
 exports["default"] = Report;
 
 
@@ -294335,7 +294358,7 @@ exports["default"] = Report;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.versionControlFlags = exports.ultralightAccessFlags = void 0;
+exports.ultralightAccessFlags = void 0;
 const core_1 = __nccwpck_require2_(39805);
 exports.ultralightAccessFlags = {
     ultralightApiKey: core_1.Flags.string({
@@ -294348,16 +294371,6 @@ exports.ultralightAccessFlags = {
         description: '(For internal developer use.) The Ultralight URL.',
         required: false,
         default: 'https://app.ultralightlabs.com'
-    })
-};
-exports.versionControlFlags = {
-    commitUrl: core_1.Flags.string({
-        char: 'c',
-        description: 'Commit URL. This will be used in Ultralight as the Unit Under Test'
-    }),
-    buildUrl: core_1.Flags.string({
-        char: 'b',
-        description: 'Build URL. This will be used in Ultralight to link out to the build for traceability'
     })
 };
 
@@ -294581,7 +294594,7 @@ const upload_1 = __nccwpck_require2_(41550);
 const axios_1 = __importDefault(__nccwpck_require2_(87269));
 const utils_1 = __nccwpck_require2_(71798);
 function reportTestExecutions(_a) {
-    return __awaiter(this, arguments, void 0, function* ({ ultralightUrl, ultralightApiKey, buildUrl, commitUrl, testExecutions }) {
+    return __awaiter(this, arguments, void 0, function* ({ ultralightUrl, ultralightApiKey, buildUrl, commitUrl, pullRequestUrl, commitHash, testExecutions }) {
         const errors = [];
         const messages = [];
         const warnings = [];
@@ -294596,6 +294609,8 @@ function reportTestExecutions(_a) {
             const reportResult = yield axios_1.default.post(new URL('api/v1/report/executions', ultralightUrl).toString(), {
                 githubBuildUrl: buildUrl,
                 githubCommitUrl: commitUrl,
+                pullRequestUrl,
+                commitHash,
                 testExecutions,
                 files
             }, {
@@ -294689,7 +294704,7 @@ const axios_1 = __importDefault(__nccwpck_require2_(87269));
 const utils_1 = __nccwpck_require2_(71798);
 const report_test_steps_1 = __nccwpck_require2_(38656);
 function reportTest(_a) {
-    return __awaiter(this, arguments, void 0, function* ({ ultralightUrl, ultralightApiKey, buildUrl, commitUrl, testExecutionReportPath, ultralightProductId, testProtocolDefinitionsDirPath, cucumberFeaturesDirPath }) {
+    return __awaiter(this, arguments, void 0, function* ({ ultralightUrl, ultralightApiKey, buildUrl, commitUrl, pullRequestUrl, commitHash, testExecutionReportPath, ultralightProductId, testProtocolDefinitionsDirPath, cucumberFeaturesDirPath }) {
         const errors = [];
         const messages = [];
         const warnings = [];
@@ -294710,6 +294725,8 @@ function reportTest(_a) {
             const reportResult = yield axios_1.default.post(new URL('api/v1/report/build', ultralightUrl).toString(), {
                 githubBuildUrl: buildUrl,
                 githubCommitUrl: commitUrl,
+                pullRequestUrl,
+                commitHash,
                 testReport: testExecutionReportPath
                     ? {
                         key: reportKey,
