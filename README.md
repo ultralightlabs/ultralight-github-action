@@ -43,7 +43,22 @@ your Ultralight instance, for best-in-class traceability.
     # instance.
     # See "Test Protocol Definitions" section below for how the
     # files should be formatted.
-    test-protocol-definitions-directory-path: test-protocols/
+    test-protocol-definitions-directory-path:
+      test-protocols/
+
+      # Recommended to enable Release module integrations if your trigger is not a `pull_request` event.
+    # Commit hash queried from your github action context. Query method varies depending on your
+    # workflow's event trigger.
+    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
+    # for full examples conditioned on event trigger.
+    commit-hash:
+
+    # Recommended to enable Release module integrations if your trigger is not a `pull_request` event.
+    # PR URL queried from your github action context. Query method varies depending on your
+    # workflow's event trigger.
+    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
+    # for full examples conditioned on event trigger.
+    pr-url:
 ```
 
 #### Test Protocol Definitions

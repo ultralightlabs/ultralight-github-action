@@ -29,6 +29,13 @@ export async function run(): Promise<void> {
 
     let result: UltralightApiResponse
 
+    const pullRequestEventPayload = github.context.payload
+      .pull_request as PullRequestEvent['pull_request']
+
+    const commitHash =
+      core.getInput('commit-hash') || pullRequestEventPayload?.head?.sha
+    const prUrl = core.getInput('pr-url') || pullRequestEventPayload?.html_url
+
     if (command === 'REPORT_TEST') {
       if (!ultralightProductId)
         throw new Error(
@@ -38,6 +45,8 @@ export async function run(): Promise<void> {
       result = await reportTest({
         buildUrl: getGithubBuildUrl(),
         commitUrl: getGithubCommitUrl(),
+        commitHash,
+        pullRequestUrl: prUrl,
         testExecutionReportPath,
         testProtocolDefinitionsDirPath,
         ultralightProductId,
@@ -45,11 +54,6 @@ export async function run(): Promise<void> {
         ultralightUrl
       })
     } else if (command === 'REPORT_COMMIT') {
-      const pullRequestEventPayload = github.context.payload
-        .pull_request as PullRequestEvent['pull_request']
-
-      let commitHash = core.getInput('commit-hash')
-      let prUrl = core.getInput('pr-url')
       let prDescription: string | null = null
 
       const prDescriptionFilePath =
@@ -58,16 +62,13 @@ export async function run(): Promise<void> {
       if (prDescriptionFilePath) {
         prDescription = fs.readFileSync(prDescriptionFilePath, 'utf8')
       }
+      prDescription = prDescription || pullRequestEventPayload?.body
 
-      if (!(commitHash && prUrl && prDescription) && !pullRequestEventPayload) {
+      if (!(commitHash && prUrl && prDescription)) {
         throw new Error(
           'command=REPORT_COMMIT requires env variables COMMIT_HASH, PR_URL, and PR_DESCRIPTION_FILE_PATH to be set when not triggered by a pull_request event'
         )
       }
-
-      commitHash = commitHash || pullRequestEventPayload.head.sha
-      prUrl = prUrl || pullRequestEventPayload.html_url
-      prDescription = prDescription || pullRequestEventPayload.body
 
       const isMergeCommit =
         core.getInput('is-merge-commit').toLowerCase() === 'true' ||
