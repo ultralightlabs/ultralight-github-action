@@ -26,6 +26,9 @@ export async function run(): Promise<void> {
     const testExecutionReportPath =
       process.env.UL_TEST_EXECUTION_REPORT_PATH ||
       core.getInput('test-execution-report-path')
+    const unitUnderTest =
+      process.env.UL_UNIT_UNDER_TEST ||
+      core.getInput('test-execution-unit-under-test')
 
     let result: UltralightApiResponse
 
@@ -48,6 +51,7 @@ export async function run(): Promise<void> {
         commitHash,
         pullRequestUrl: prUrl,
         testExecutionReportPath,
+        unitUnderTest,
         testProtocolDefinitionsDirPath,
         ultralightProductId,
         ultralightApiKey,

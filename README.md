@@ -36,6 +36,9 @@ your Ultralight instance, for best-in-class traceability.
     # Ultralight Design Controls instance.
     test-execution-report-path: test-results/junit.xml
 
+    # Optional, custom 'Unit Under Test' to display in test execution report
+    test-execution-unit-under-test: V123.456.789
+
     # Optional, enables test protocol updates.
     # Path to the directory holding the YAML files for your test protocol
     # definitions. Every test protocol must be an existing Verification (e.g.

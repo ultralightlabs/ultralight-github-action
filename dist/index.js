@@ -30032,6 +30032,8 @@ async function run() {
             core.getInput('test-protocol-definitions-directory-path');
         const testExecutionReportPath = process.env.UL_TEST_EXECUTION_REPORT_PATH ||
             core.getInput('test-execution-report-path');
+        const unitUnderTest = process.env.UL_UNIT_UNDER_TEST ||
+            core.getInput('test-execution-unit-under-test');
         let result;
         const pullRequestEventPayload = github.context.payload
             .pull_request;
@@ -30046,6 +30048,7 @@ async function run() {
                 commitHash,
                 pullRequestUrl: prUrl,
                 testExecutionReportPath,
+                unitUnderTest,
                 testProtocolDefinitionsDirPath,
                 ultralightProductId,
                 ultralightApiKey,
@@ -294334,8 +294337,11 @@ Report.flags = Object.assign({ ultralightProductId: core_1.Flags.integer({
         description: 'Cucumber Features Directory Path. This is the path to the directory containing the cucumber features'
     }), commitUrl: core_1.Flags.string({
         char: 'c',
-        description: 'Commit URL. This will be used in Ultralight as the Unit Under Test',
+        description: 'Commit URL. If a custom unitUnderTest is not provided, this will be used as the default in your generated test reports',
         required: true
+    }), unitUnderTest: core_1.Flags.string({
+        char: 'u',
+        description: 'Custom name for the unit under test to display in generated test reports'
     }), buildUrl: core_1.Flags.string({
         char: 'b',
         description: 'Build URL. This will be used in Ultralight to link out to the build for traceability',
@@ -294704,7 +294710,7 @@ const axios_1 = __importDefault(__nccwpck_require2_(87269));
 const utils_1 = __nccwpck_require2_(71798);
 const report_test_steps_1 = __nccwpck_require2_(38656);
 function reportTest(_a) {
-    return __awaiter(this, arguments, void 0, function* ({ ultralightUrl, ultralightApiKey, buildUrl, commitUrl, pullRequestUrl, commitHash, testExecutionReportPath, ultralightProductId, testProtocolDefinitionsDirPath, cucumberFeaturesDirPath }) {
+    return __awaiter(this, arguments, void 0, function* ({ ultralightUrl, ultralightApiKey, buildUrl, commitUrl, pullRequestUrl, commitHash, unitUnderTest, testExecutionReportPath, ultralightProductId, testProtocolDefinitionsDirPath, cucumberFeaturesDirPath }) {
         const errors = [];
         const messages = [];
         const warnings = [];
@@ -294725,6 +294731,7 @@ function reportTest(_a) {
             const reportResult = yield axios_1.default.post(new URL('api/v1/report/build', ultralightUrl).toString(), {
                 githubBuildUrl: buildUrl,
                 githubCommitUrl: commitUrl,
+                unitUnderTest,
                 pullRequestUrl,
                 commitHash,
                 testReport: testExecutionReportPath
