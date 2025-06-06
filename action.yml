@@ -58,6 +58,10 @@ inputs:
       existing Verification (e.g. VER-1) or Validation (e.g. VAL-2) in your
       Ultralight Design Controls instance.
     required: false
+  test-execution-unit-under-test:
+    description:
+      Custom name for the unit under test to display in generated test reports
+    required: false
   test-protocol-definitions-directory-path:
     description: >-
       Path to the directory holding the YAML files for your test protocol
