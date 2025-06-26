@@ -30039,6 +30039,8 @@ async function run() {
             .pull_request;
         const commitHash = core.getInput('commit-hash') || pullRequestEventPayload?.head?.sha;
         const prUrl = core.getInput('pr-url') || pullRequestEventPayload?.html_url;
+        const isMergeCommit = core.getInput('is-merge-commit').toLowerCase() === 'true' ||
+            pullRequestEventPayload.merged === true;
         if (command === 'REPORT_TEST') {
             if (!ultralightProductId)
                 throw new Error('command=REPORT_TEST requires input ultralight-product-id');
@@ -30047,6 +30049,7 @@ async function run() {
                 commitUrl: (0, githubUtils_1.getGithubCommitUrl)(),
                 commitHash,
                 pullRequestUrl: prUrl,
+                isMergeCommit,
                 testExecutionReportPath,
                 unitUnderTest,
                 testProtocolDefinitionsDirPath,
@@ -30066,8 +30069,6 @@ async function run() {
             if (!(commitHash && prUrl && prDescription)) {
                 throw new Error('command=REPORT_COMMIT requires env variables COMMIT_HASH, PR_URL, and PR_DESCRIPTION_FILE_PATH to be set when not triggered by a pull_request event');
             }
-            const isMergeCommit = core.getInput('is-merge-commit').toLowerCase() === 'true' ||
-                pullRequestEventPayload.merged === true;
             result = await (0, ultralight_core_1.reportCommit)({
                 ultralightUrl,
                 ultralightApiKey,
@@ -294352,6 +294353,10 @@ Report.flags = Object.assign({ ultralightProductId: core_1.Flags.integer({
     }), commitHash: core_1.Flags.string({
         char: 'h',
         description: 'Commit Hash. This will be used in Ultralight to link out to the commit for traceability'
+    }), isMergeCommit: core_1.Flags.boolean({
+        char: 'g',
+        description: 'Whether the commit is a merge commit', // TO-DO: [ULT-2816] Add support for merge commits in Gitlab CI
+        required: false
     }) }, shared_flags_1.ultralightAccessFlags);
 exports["default"] = Report;
 
@@ -294710,7 +294715,7 @@ const axios_1 = __importDefault(__nccwpck_require2_(87269));
 const utils_1 = __nccwpck_require2_(71798);
 const report_test_steps_1 = __nccwpck_require2_(38656);
 function reportTest(_a) {
-    return __awaiter(this, arguments, void 0, function* ({ ultralightUrl, ultralightApiKey, buildUrl, commitUrl, pullRequestUrl, commitHash, unitUnderTest, testExecutionReportPath, ultralightProductId, testProtocolDefinitionsDirPath, cucumberFeaturesDirPath }) {
+    return __awaiter(this, arguments, void 0, function* ({ ultralightUrl, ultralightApiKey, buildUrl, commitUrl, pullRequestUrl, commitHash, isMergeCommit, unitUnderTest, testExecutionReportPath, ultralightProductId, testProtocolDefinitionsDirPath, cucumberFeaturesDirPath }) {
         const errors = [];
         const messages = [];
         const warnings = [];
@@ -294734,6 +294739,7 @@ function reportTest(_a) {
                 unitUnderTest,
                 pullRequestUrl,
                 commitHash,
+                isMergeCommit,
                 testReport: testExecutionReportPath
                     ? {
                         key: reportKey,

@@ -39,6 +39,10 @@ export async function run(): Promise<void> {
       core.getInput('commit-hash') || pullRequestEventPayload?.head?.sha
     const prUrl = core.getInput('pr-url') || pullRequestEventPayload?.html_url
 
+    const isMergeCommit =
+      core.getInput('is-merge-commit').toLowerCase() === 'true' ||
+      pullRequestEventPayload.merged === true
+
     if (command === 'REPORT_TEST') {
       if (!ultralightProductId)
         throw new Error(
@@ -50,6 +54,7 @@ export async function run(): Promise<void> {
         commitUrl: getGithubCommitUrl(),
         commitHash,
         pullRequestUrl: prUrl,
+        isMergeCommit,
         testExecutionReportPath,
         unitUnderTest,
         testProtocolDefinitionsDirPath,
@@ -73,10 +78,6 @@ export async function run(): Promise<void> {
           'command=REPORT_COMMIT requires env variables COMMIT_HASH, PR_URL, and PR_DESCRIPTION_FILE_PATH to be set when not triggered by a pull_request event'
         )
       }
-
-      const isMergeCommit =
-        core.getInput('is-merge-commit').toLowerCase() === 'true' ||
-        pullRequestEventPayload.merged === true
 
       result = await reportCommit({
         ultralightUrl,

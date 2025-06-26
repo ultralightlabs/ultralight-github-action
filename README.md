@@ -62,6 +62,14 @@ your Ultralight instance, for best-in-class traceability.
     # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
     # for full examples conditioned on event trigger.
     pr-url:
+
+    # Can be supplied optionally if your trigger is not a `pull_request` event.
+    # Whether the supplied commit is a `merge` commit, queried from your github action context. Query method varies depending on your
+    # workflow's event trigger.
+    # Updating an approved Software Part Version with a merge commit will NOT withdraw approval for that Software Part Version.
+    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
+    # for full examples conditioned on event trigger.
+    is-merge-commit:
 ```
 
 #### Test Protocol Definitions
