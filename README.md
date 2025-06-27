@@ -9,7 +9,7 @@ your Ultralight instance, for best-in-class traceability.
 
 ```yaml
 - if: always() # Runs even if previous steps fail
-  uses: ultralightlabs/ultralight-github-action@v1
+  uses: stingerlabs/ultralight-github-action@v1
   with:
     # Required.
     # The command type. One of 'REPORT_TEST' or 'REPORT_COMMIT'.
@@ -52,14 +52,14 @@ your Ultralight instance, for best-in-class traceability.
       # Recommended to enable Release module integrations if your trigger is not a `pull_request` event.
     # Commit hash queried from your github action context. Query method varies depending on your
     # workflow's event trigger.
-    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
+    # See https://github.com/stingerlabs/ultralight-test-project/blob/main/.github/workflows/report-commit
     # for full examples conditioned on event trigger.
     commit-hash:
 
     # Recommended to enable Release module integrations if your trigger is not a `pull_request` event.
     # PR URL queried from your github action context. Query method varies depending on your
     # workflow's event trigger.
-    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
+    # See https://github.com/stingerlabs/ultralight-test-project/blob/main/.github/workflows/report-commit
     # for full examples conditioned on event trigger.
     pr-url:
 
@@ -67,7 +67,7 @@ your Ultralight instance, for best-in-class traceability.
     # Whether the supplied commit is a `merge` commit, queried from your github action context. Query method varies depending on your
     # workflow's event trigger.
     # Updating an approved Software Part Version with a merge commit will NOT withdraw approval for that Software Part Version.
-    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
+    # See https://github.com/stingerlabs/ultralight-test-project/blob/main/.github/workflows/report-commit
     # for full examples conditioned on event trigger.
     is-merge-commit:
 ```
@@ -93,7 +93,7 @@ steps:
 ```yaml
 - if: always() # Runs even if previous steps fail
   id: report-commit
-  uses: ultralightlabs/ultralight-github-action@v1
+  uses: stingerlabs/ultralight-github-action@v1
   with:
     # Required.
     # The command type. One of 'REPORT_TEST' or 'REPORT_COMMIT'.
@@ -107,27 +107,27 @@ steps:
     # The variables below are included automatically in the context of `pull_request` events.
     # If your build triggers off a non-`pull_request` event, you will need to supply the below variables,
     # which may involve additional requests to the GitHub API.
-    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
+    # See https://github.com/stingerlabs/ultralight-test-project/blob/main/.github/workflows/report-commit
     # for full examples conditioned on event trigger.
 
     # Required if your trigger is not a `pull_request` event.
     # Commit hash queried from your github action context. Query method varies depending on your
     # workflow's event trigger.
-    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
+    # See https://github.com/stingerlabs/ultralight-test-project/blob/main/.github/workflows/report-commit
     # for full examples conditioned on event trigger.
     commit-hash:
 
     # Required if your trigger is not a `pull_request` event.
     # PR URL queried from your github action context. Query method varies depending on your
     # workflow's event trigger.
-    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
+    # See https://github.com/stingerlabs/ultralight-test-project/blob/main/.github/workflows/report-commit
     # for full examples conditioned on event trigger.
     pr-url:
 
     # Required if your trigger is not a `pull_request` event.
     # PR description queried from your github action context. Query method varies depending on your
     # workflow's event trigger.
-    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
+    # See https://github.com/stingerlabs/ultralight-test-project/blob/main/.github/workflows/report-commit
     # for full examples conditioned on event trigger.
     pr-description-file-path: pr-body.txt
 
@@ -135,7 +135,7 @@ steps:
     # Whether the supplied commit is a `merge` commit, queried from your github action context. Query method varies depending on your
     # workflow's event trigger.
     # Updating an approved Software Part Version with a merge commit will NOT withdraw approval for that Software Part Version.
-    # See https://github.com/ultralightlabs/test-project/blob/main/.github/workflows/report-commit
+    # See https://github.com/stingerlabs/ultralight-test-project/blob/main/.github/workflows/report-commit
     # for full examples conditioned on event trigger.
     is-merge-commit:
 
